@@ -24,14 +24,12 @@ a{
   nav{
     /* background-color: var(--theme); */
     height: 10vh;
-  }
-  .logo_title{
-    font-size: 1.4rem;
-  }
-  .nav_container{
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+  }
+  .logo_title{
+    font-size: 1.4rem;
   }
 
   .nav_bar{
@@ -59,7 +57,7 @@ a{
 
   }
  
-#header_container{
+header{
 
     margin-top: 10px;
     height: fit-content;
@@ -89,7 +87,7 @@ a{
     height: 2.4rem;
     /* margin-top: 8px; */
     background: transparent;
-    border: 2px solid var(--theme);
+    border: 1px solid var(--theme);
     color: var(--theme);
     cursor: pointer;
     font-size: 0.9rem;
@@ -141,7 +139,7 @@ a{
     flex-wrap: wrap;
 }
 .about_qualification_head{
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 .about_img{
     transform: scaleX(-1);
@@ -230,6 +228,7 @@ a{
 }
 .project_title{
     font-size: 1.3rem;
+    font-weight: bold;
     margin-bottom: 10px;
 }
 
@@ -340,13 +339,14 @@ a{
 }
 .experience_role{
     font-size: 1rem;
+    font-weight: bold;
 }
 .experience_detail{
     padding: 5px;
 }
 /*------------------------------------- footer section--------------------- */
 
-#footer-section{
+footer{
 
     display: flex;
     align-items: center;
@@ -383,7 +383,7 @@ a{
 
 /*----------------------------------------------------- Media queries----------------------------------------------------- */
 
-/* For laptop devices */
+/*---------- For laptop devices------------- */
 @media only screen and (min-width: 769px) and (max-width:1024px) {
     html{
         font-size: 12px;
@@ -403,7 +403,7 @@ a{
     .profile_image_header{
         width: 70% !important;
     }
-    #header_container{
+    header{
         height: 40vh;
     }
     .about_img{
@@ -421,10 +421,10 @@ a{
     }
 }
 
-/* For pads */
+/*--------- For pads--------- */
 @media only screen and (min-width: 550px) and (max-width:768px) {
     html{
-        font-size: 8px;
+        font-size: 7px;
     }
     .about_info_container{
         /* width: 60vw; */
@@ -440,17 +440,18 @@ a{
         margin-left: 5px;
     }
     .profile_image_header{
-        width: 50% !important;
+        width: 40% !important;
     }
-    #header_container{
+    header{
         height: 30vh;
+    
     }
     .video_container video{
         width: 60%;
 
     }
     .about_img{
-        width: 50%;
+        width: 45%;
     }
     .experience_item{
         height: 30vh;
@@ -467,7 +468,7 @@ a{
     }
 
 }
-/* Mobile devices */
+/*--------- Mobile devices -----------------*/
 @media only screen and (min-width: 320px) and (max-width:549px) {
     html{
         font-size: 7px;
@@ -493,7 +494,7 @@ a{
     .profile_image_header{
         width: 30% !important;
     }
-    #header_container{
+    header{
         height: 40vh;
     }
     .video_container video{
