@@ -1,0 +1,526 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;1,900&display=swap');
+
+*{ /* universal tag  */ 
+    padding: 0px; /* give padding both to elments as well as to body itself*/
+    margin: 0px; /*if I add this to body tag then it will give padding to only body element/ container*/
+    font-family: var(--headFont);
+    box-sizing: border-box;
+}
+:root {
+    --primary: #000000;
+    --secondary: #ffffff;
+    --theme:#1e90ff;
+    --gray:#1e1e1f;
+    --headFont:'Montserrat', sans-serif;
+  }
+
+a{
+    text-decoration: none;
+}
+
+  /*---------------------------------------- Nav css----------------------------- */
+
+  nav{
+    /* background-color: var(--theme); */
+    height: 10vh;
+  }
+  .logo_title{
+    font-size: 1.4rem;
+  }
+  .nav_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+
+  .nav_bar{
+    display: flex;
+  }
+  nav li{
+    list-style: none;
+    margin: 10px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  nav li a{
+    color: var(--primary);
+    font-size: 1.1rem;
+  }
+
+  /* Header section---------------------------------------- */
+
+  .header_info_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 60vh;
+    width: 50vw;
+
+  }
+ 
+#header_container{
+
+    margin-top: 10px;
+    height: fit-content;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    justify-content: space-evenly;
+    align-items: center;
+
+}
+
+.header_image_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:max-content;
+}
+.info_container{
+
+    display: flex;
+    justify-content: space-between;
+    width: 30vw;
+   
+}
+
+.btn_border{
+    width: 8rem;
+    height: 2.4rem;
+    /* margin-top: 8px; */
+    background: transparent;
+    border: 2px solid var(--theme);
+    color: var(--theme);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.btn_border:hover{
+    background-color: var(--theme);
+    border: none;
+    color: white;
+
+}
+.intro_heading{
+    font-size: 2.3rem;
+}
+.name{
+    color: var(--theme);
+}
+
+.header_social_icons i{
+    font-size: 1.5rem;
+    cursor: pointer;
+    
+    color: var(--primary);
+}
+.count_text{
+    font-size: 2rem;
+    color: var(--theme);
+}
+
+
+/*------------------------------------------------------- About section------------------------- */
+
+#about_container{
+   background-color: var(--theme);
+   color: var(--primary);
+   display: flex;
+   padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.section_heading{
+    text-transform: uppercase;
+    font-size: 2rem;
+}
+.about_sub_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+.about_qualification_head{
+    font-size: 1.5rem;
+}
+.about_img{
+    transform: scaleX(-1);
+}
+.about_img_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.about_info_container{
+    width:50%; 
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+
+}
+.about_info{
+    margin-bottom: 20px;
+}
+#btn_view_resume{
+   
+    margin-top: 8px;
+    background: transparent;
+    border: 2px solid var(--secondary);
+    color: var(--secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: 8rem;
+    height: 2rem;
+}
+
+.about_heading{
+    color: var(--secondary);
+    font-size: 1.5rem;
+    border-bottom: 1px solid rgb(255, 255, 255);
+    width: 30vw;
+    padding: 10px;
+}
+
+
+/* --------------------------projects sections--------------------------------- */
+#projects_section{
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+.skills_bar_container{
+    padding-top: 10px;
+    padding-bottom: 20px;
+    padding-right: 10px;
+}
+.skills_bar_item{
+    margin-top: 10px;
+    background-color: lightgray;
+}
+.skills_bar{
+    background-color: var(--theme); 
+    font-size: 60%;
+    padding: 2px;
+    font-weight: bold;
+     text-align: center; 
+     text-transform: uppercase;
+}
+.project_item_container{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap-reverse;
+    margin-top: 3rem;
+
+}
+.project_info_container{
+    width: 40vw;
+
+
+}
+.video_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#source_btn1,#source_btn2,#source_btn3{
+    border: none;
+   
+}
+.project_title{
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+
+/*------------------------------------------- contact section--------------------------------------------------- */
+#contact_section{
+    
+    color: var(--secondary);
+     height: 60vh;
+     padding: 1rem;
+     position: relative;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+
+}
+#contact_section::before{
+    content: "";
+    background: linear-gradient(rgba(0, 0, 0, 0.1),rgba(0, 0, 0, 0.3),rgba(1, 71, 146, 0.2)),url("./images/contact.jpg");
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-repeat: no-repeat;
+    background-position:bottom;
+    background-size: 100%;
+    z-index: -1;
+    opacity: 1;
+
+
+}
+.contact_details_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    /* border: 2px solid red; */
+    height: 50vh;
+}
+.contact_name{
+    font-size: 2rem;
+    color: var(--theme);
+
+}
+.tag_contact_name{
+    font-size: 1rem;
+}
+.contact_img_container{
+    background-color: white;
+    border-radius: 100%;
+
+}
+.contact_details_container i{
+    margin-right: 10px;
+    color: var(--theme);
+}
+
+#contact_btn{
+    margin-top: 8px;
+    background: transparent;
+    border: 2px solid var(--secondary);
+    color: var(--secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: 8rem;
+    height: 2rem;
+
+}
+.load_more_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/*----------------------------------------------- Experience section------------------------------------------ */
+
+#experience_container{
+
+    margin-top: 2rem;
+    padding: 2rem;
+  
+}
+
+.experience_details{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+
+}
+.experience_item{
+    border: 2px solid var(--theme);
+    margin: 2rem;
+    height: 60vh;
+    width: 25vw;
+    /* padding: 20px; */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+.experience_title{
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--theme);
+}
+.experience_role{
+    font-size: 1rem;
+}
+.experience_detail{
+    padding: 5px;
+}
+/*------------------------------------- footer section--------------------- */
+
+#footer-section{
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 10vh;
+    background-color: var(--gray);
+    color: white;
+}
+.socials i{
+    margin: 10px;
+    font-size: 1.3rem;
+}
+.copyright{
+    font-size: 1rem;
+    text-transform: capitalize;
+    text-align: center;
+    width: 30vw;
+    padding: 10px;
+}
+
+
+/* -------------skills Section--------------------- */
+
+.skills_item_container
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.skills_item{
+    width: 30vw;
+}
+
+
+/*----------------------------------------------------- Media queries----------------------------------------------------- */
+
+/* For laptop devices */
+@media only screen and (min-width: 769px) and (max-width:1024px) {
+    html{
+        font-size: 12px;
+    }
+    .about_info_container{
+        /* width: 60vw; */
+        height:35vh
+    }
+    .project_info_container{
+        width: 70vw;
+        margin-top: 20px;
+
+    }
+    .header_info_container{
+        height: 35vh;
+    }
+    .profile_image_header{
+        width: 70% !important;
+    }
+    #header_container{
+        height: 40vh;
+    }
+    .about_img{
+        width: 70%;
+    }
+    .experience_item{
+        height: 40vh;
+    }
+    .contact_details_container{
+        height: 30vh;
+    }
+    #contact_section{
+        height: 40vh;
+
+    }
+}
+
+/* For pads */
+@media only screen and (min-width: 550px) and (max-width:768px) {
+    html{
+        font-size: 8px;
+    }
+    .about_info_container{
+        /* width: 60vw; */
+        height:25vh
+    }
+    .project_info_container{
+        width: 70vw;
+        margin-top: 20px;
+
+    }
+    .header_info_container{
+        height: 20vh;
+        margin-left: 5px;
+    }
+    .profile_image_header{
+        width: 50% !important;
+    }
+    #header_container{
+        height: 30vh;
+    }
+    .video_container video{
+        width: 60%;
+
+    }
+    .about_img{
+        width: 50%;
+    }
+    .experience_item{
+        height: 30vh;
+    }
+    .contact_details_container{
+        height: 20vh;
+    }
+    #contact_section{
+        height: 30vh;
+
+    }
+    .project_info_container{
+        width: 50vw;
+    }
+
+}
+/* Mobile devices */
+@media only screen and (min-width: 320px) and (max-width:549px) {
+    html{
+        font-size: 7px;
+    }
+    .about_info_container{
+        /* width: 60vw; */
+        height:20vh
+    }
+    .project_info_container{
+        width: 70vw;
+        margin-top: 20px;
+
+    }
+    .header_image_container{
+        
+        /* width:250px; */
+    }
+    .header_info_container{
+        height: 20vh;
+        width: 40rem;
+        /* margin-left: 5px; */
+    }
+    .profile_image_header{
+        width: 30% !important;
+    }
+    #header_container{
+        height: 40vh;
+    }
+    .video_container video{
+        width: 40%;
+
+    }
+    #check_header_btn{
+        visibility: hiddens;
+    }
+    .about_img{
+        width: 30%;
+    }
+    .experience_item{
+        height: 30vh;
+    }
+    .contact_details_container{
+        height: 15vh;
+    }
+    #contact_section{
+        height: 20vh;
+
+    }
+    .project_info_container{
+        width: 50vw;
+    }
+}
+
+
+
+
