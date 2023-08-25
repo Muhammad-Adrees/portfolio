@@ -247,7 +247,7 @@ header{
 }
 #contact_section::before{
     content: "";
-    background: linear-gradient(rgba(0, 0, 0, 0.1),rgba(0, 0, 0, 0.3),rgba(1, 71, 146, 0.2)),url("./images/contact.jpg");
+    background: linear-gradient(rgba(0, 0, 0, 0.1),rgba(0, 0, 0, 0.3),rgba(1, 71, 146, 0.2)),url("./public/contact.jpg");
     position: absolute;
     top: 0;
     left: 0;
