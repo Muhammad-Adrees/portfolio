@@ -28,7 +28,7 @@ export class Contact {
     // download the file
     this.#download(ContactArr);
   }
-  updateContact(userid, id, upContact) {
+  updateContact(userid, upContact) {
     // search particular Contact id then update data then save json
 
     // get data from .json
@@ -39,7 +39,7 @@ export class Contact {
     let ContactIn = -1;
 
     for (let i = 0; i < ContactArr.length; i++) {
-      if (ContactArr[i].contactId === id && ContactArr[i].userId === userid) {
+      if ( ContactArr[i].userId === userid) {
         ContactIn = i;
         break;
       }
@@ -48,7 +48,7 @@ export class Contact {
 
     // update object
     const updatedVersion = {
-      contactId: id,
+      contactId:ContactArr[ContactIn].contactId,
       userId: userid,
       email: upContact.email,
       phone: upContact.phone,

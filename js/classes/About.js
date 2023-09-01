@@ -22,7 +22,7 @@ export class About {
     // download the file
     this.#download(aboutArr);
   }
-  updateAbout(userid, id, upAbout) {
+  updateAbout(userid, upAbout) {
     // search particular About id then update data then save json
 
     // get data from .json
@@ -33,7 +33,7 @@ export class About {
     let aboutIn = -1;
 
     for (let i = 0; i < aboutArr.length; i++) {
-      if (aboutArr[i].aboutId === id && aboutArr[i].userId === userid) {
+      if (aboutArr[i].userId === userid) {
         aboutIn = i;
         break;
       }
@@ -41,7 +41,7 @@ export class About {
 
     // update object
     const updatedVersion = {
-      aboutId: id,
+      aboutId:aboutArr[aboutIn].aboutId,
       userId: userid,
       desc: upAbout.desc,
     };

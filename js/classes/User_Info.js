@@ -22,7 +22,7 @@ export class User_Info {
     // download the file
     this.#download(userInfoArr);
   }
-  updateuserInfo(userid, id, upuserInfo) {
+  updateuserInfo(userid, upuserInfo) {
     // search particular userInfo id then update data then save json
 
     // get data from .json
@@ -34,7 +34,6 @@ export class User_Info {
 
     for (let i = 0; i < userInfoArr.length; i++) {
       if (
-        userInfoArr[i].userInfoId === id &&
         userInfoArr[i].userId === userid
       ) {
         userInfoIn = i;
@@ -45,7 +44,7 @@ export class User_Info {
 
     // update object
     const updatedVersion = {
-      userInfoId: id,
+      userInfoId:userInfoArr[userInfoIn].userInfoId,
       userId: userid,
       designation: upuserInfo.designation,
       location: upuserInfo.location,

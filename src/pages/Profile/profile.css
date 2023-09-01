@@ -88,13 +88,15 @@
    justify-content: center;
 }
 
-
+.about_profile_edit{
+    height: 10vh;
+}
 
 .input_field{
     padding: 8px;
     width: 300px;
-    margin-top: 3px;
-    margin-bottom: 3px;
+    margin-top: 7px;
+    margin-bottom: 7px;
     border: 1px solid black;
 
 }
@@ -105,6 +107,23 @@
 .input_field::placeholder{
     color: rgb(17, 17, 17);
     font-size: 13px;
+}
+
+.item_controls{
+    align-self: flex-end;
+}
+.item_controls i{
+    margin: 5px;
+}
+.add_btn_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* border: 2px solid red; */
+}
+.education_edits{
+    position: relative;
+    left: 100px;
 }
 
 /* nav css ----------------------------*/
