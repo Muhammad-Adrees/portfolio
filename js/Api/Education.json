@@ -1,0 +1,32 @@
+[
+    {
+        "educationId": 1,
+      "userId": 1,
+      "instituteName": "University of punjab",
+      "degree": "BS in software Engineering",
+      "location":"Lahore, Pakistan",
+      "startDate":"Mon Jun 25 2018 00:00:00 GMT+0500 (Pakistan Standard Time)",
+      "endDate": "Wed Mar 25 2015 00:00:00 GMT+0500 (Pakistan Standard Time)",
+      "desc": ""
+    },
+    {
+        "educationId": 2,
+      "userId": 1,
+      "instituteName": "Comsats",
+      "degree": "Masters",
+      "location":"Karachi, Pakistan",
+      "startDate":"Wed Mar 25 2020 00:00:00 GMT+0500 (Pakistan Standard Time)",
+      "endDate": "Wed Mar 25 2015 00:00:00 GMT+0500 (Pakistan Standard Time)",
+      "desc": ""
+    },
+    {
+        "educationId": 3,
+      "userId": 2,
+      "instituteName": "UET",
+      "degree": "PHD",
+      "location":"Islamabad, Pakistan",
+      "startDate":"Wed Mar 25 2015 00:00:00 GMT+0500 (Pakistan Standard Time)",
+      "endDate": "Wed Mar 25 2015 00:00:00 GMT+0500 (Pakistan Standard Time)",
+      "desc": ""
+    }
+]

@@ -1,0 +1,32 @@
+[
+    {
+        "contactId": 1,
+        "userId": 1,
+        "email": "anonymousboypersonal@gmail.com",
+        "phone": "+9232334343",
+        "linkedin": "https://www.linkedin.com",
+        "instagram": "https://www.instagram.com",
+        "twitter": "https://www.twitter.com",
+        "github": "https://www.github.com"
+    },
+    {
+        "contactId": 2,
+        "userId": 2,
+        "email": "rana.adrees5890@gmail.com",
+        "phone": "+9232444446",
+        "linkedin": "https://www.linkedin.com",
+        "instagram": "https://www.instagram.com",
+        "twitter": "https://www.twitter.com",
+        "github": "https://www.github.com"
+    },
+    {
+        "contactId": 3,
+        "userId": 3,
+        "email": "adrees5890@gmail.com",
+        "phone": "+92322778899",
+        "linkedin": "https://www.linkedin.com",
+        "instagram": "https://www.instagram.com",
+        "twitter": "https://www.twitter.com",
+        "github": "https://www.github.com"
+    }
+]

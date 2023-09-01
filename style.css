@@ -19,8 +19,57 @@ a{
     text-decoration: none;
 }
 
+/* common css */
+
+
+.btn_border{
+    width: 8rem;
+    height: 2.4rem;
+    background: transparent;
+    border: 1px solid var(--theme);
+    color: var(--theme);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* margin: 10px; */
+}
+.btn_border:hover{
+    background-color: var(--theme);
+    border: none;
+    color: white;
+
+}
+.filled_btn{
+    width: 8rem;
+    height: 2.4rem;
+    background: var(--theme);
+    border: none;
+    color: var(--secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn_border_white{
+    width: 8rem;
+    height: 2.4rem;
+    background: transparent;
+    border: 1px solid var(--secondary);
+    color: var(--secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
   /*---------------------------------------- Nav css----------------------------- */
 
+  .logo_link{
+    color: black;
+}
   nav{
     /* background-color: var(--theme); */
     height: 10vh;
@@ -30,6 +79,7 @@ a{
   }
   .logo_title{
     font-size: 1.4rem;
+    text-transform: uppercase;
   }
 
   .nav_bar{
@@ -44,6 +94,14 @@ a{
   nav li a{
     color: var(--primary);
     font-size: 1.1rem;
+  }
+  .nav_btn_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav_btn_container button{
+    margin-right: 10px;
   }
 
   /* Header section---------------------------------------- */
@@ -82,29 +140,17 @@ header{
    
 }
 
-.btn_border{
-    width: 8rem;
-    height: 2.4rem;
-    /* margin-top: 8px; */
-    background: transparent;
-    border: 1px solid var(--theme);
-    color: var(--theme);
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-.btn_border:hover{
-    background-color: var(--theme);
-    border: none;
-    color: white;
-
-}
 .intro_heading{
     font-size: 2.3rem;
 }
 .name{
     color: var(--theme);
 }
-
+.header_social_icons{
+    display: flex;
+    width: 30%;
+    justify-content: space-between;
+}
 .header_social_icons i{
     font-size: 1.5rem;
     cursor: pointer;
@@ -140,6 +186,8 @@ header{
 }
 .about_qualification_head{
     font-size: 1.2rem;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .about_img{
     transform: scaleX(-1);
@@ -161,18 +209,6 @@ header{
 .about_info{
     margin-bottom: 20px;
 }
-#btn_view_resume{
-   
-    margin-top: 8px;
-    background: transparent;
-    border: 2px solid var(--secondary);
-    color: var(--secondary);
-    cursor: pointer;
-    font-size: 0.9rem;
-    width: 8rem;
-    height: 2rem;
-}
-
 .about_heading{
     color: var(--secondary);
     font-size: 1.5rem;
@@ -180,7 +216,15 @@ header{
     width: 30vw;
     padding: 10px;
 }
-
+.about_uni{
+    color: var(--primary); 
+    font-size: 1.3rem; 
+    text-transform: uppercase;
+}
+.edu_section{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 
 /* --------------------------projects sections--------------------------------- */
 #projects_section{
@@ -214,13 +258,15 @@ header{
 }
 .project_info_container{
     width: 40vw;
+    cursor: pointer;
 
 
 }
-.video_container{
+.media_container{
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
 #source_btn1,#source_btn2,#source_btn3{
     border: none;
@@ -231,8 +277,22 @@ header{
     font-weight: bold;
     margin-bottom: 10px;
 }
+.project_btn_container{
+    display: flex;
+    margin-top: 15px;
+}
+.source_btn{
+    margin-left: 15px;
+}
 
-
+.load_all_btn{
+    margin-left: 20px;
+}
+.video_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 /*------------------------------------------- contact section--------------------------------------------------- */
 #contact_section{
     
@@ -367,7 +427,9 @@ footer{
     padding: 10px;
 }
 
-
+.socials_footer i{
+    color: white;
+}
 /* -------------skills Section--------------------- */
 
 .skills_item_container
@@ -380,6 +442,121 @@ footer{
     width: 30vw;
 }
 
+
+/* model section ------------------------------ */
+/* The Modal (background) */
+.modal {
+    display: none; 
+    position: fixed; /* Stay in place */
+    z-index: 1;
+    padding-top: 20px; 
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content */
+  .modal_content {
+    background-color: var(--secondary);
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    align-self: flex-end;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .model_project_img{
+    width: 30vw;
+  }
+
+.model_info_content{
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    /* border: 2px solid red; */
+    width: 70%;
+}
+.model_title{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.model_sub_title{
+    margin-top: 5px;
+    margin-bottom: 5x;
+    font-size: 1rem;
+
+}
+.model_detail{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.model_date{
+    font-size: 0.7rem;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* search bar-------------------- */
+.search_section{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.input_field_search{
+    padding: 8px;
+    width: 300px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    border: 1px solid black;
+
+}
+.input_field_search:focus{
+    outline: none;
+}
+
+.input_field_search::placeholder{
+    color: rgb(17, 17, 17);
+    font-size: 13px;
+}
+
+.search_submit{
+    width: 8rem;
+    height: 2.4rem;
+    /* margin-top: 8px; */
+    background: transparent;
+    background-color: var(--theme);
+    border: none;
+    color: var(--secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 20px;
+}
 
 /*----------------------------------------------------- Media queries----------------------------------------------------- */
 
@@ -419,6 +596,9 @@ footer{
         height: 40vh;
 
     }
+    .video_container{
+        width: 70%;
+    }
 }
 
 /*--------- For pads--------- */
@@ -446,7 +626,8 @@ footer{
         height: 30vh;
     
     }
-    .video_container video{
+
+    .video_container{
         width: 60%;
 
     }
@@ -497,7 +678,7 @@ footer{
     header{
         height: 40vh;
     }
-    .video_container video{
+    .video_container{
         width: 40%;
 
     }

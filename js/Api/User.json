@@ -1,0 +1,27 @@
+[
+    {
+    "firstName":"Muhammad",
+    "lastName":"Adrees",
+    "email":"anonymousboypersonal@gmail.com",
+    "password":"1234",
+    "userRole":"user",
+    "userId":1
+    }
+    ,
+    {"firstName":"Ahmed"
+    ,"lastName":"Ali"
+    ,"email":"rana.adrees5890@gmail.com"
+    ,"password":"123"
+    ,"userRole":"user"
+    ,"userId":2}
+    ,
+    {
+        "firstName":"Kashif",
+        "lastName":"hassan",
+        "email":"adrees.personal5890@gmail.com",
+        "password":"admin",
+        "userRole":"admin",
+        "userId":3
+    }
+
+]

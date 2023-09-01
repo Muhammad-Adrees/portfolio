@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Admin.css">
+    <title>Admin</title>
+</head>
+
+<body>
+    <nav>
+        <h2 class="logo_title" id="user_name"></h2>
+        <ul class="nav_bar">
+            <li class="nav_item"><a href="/src/pages/Admin/Admin.html">AdminPanel</a></li>
+        </ul>
+        <div class="nav_btn" id="btn_nav_handle">
+            <button class="btn_border" id="logout_btn">Logout</button>
+        </div>
+
+    </nav>
+    <section class="users_container section_container_css">
+        <div class="user_info_section">
+            <div class="search_section">
+                <form action="" id="user_search_form">
+                    <input type="text" id="search_user_keyword_input" class="input_field_search" placeholder="Enter keyword" />
+                    <select name="userKeyword" id="userKeyword" class="input_field_search">
+                        <option value="firstName">First Name</option>
+                        <option value="lastName">Last Name</option>
+                        <option value="email">Email</option>
+                        <option value="userRole">User Role</option>
+                    </select>
+                    <button type="submit" class="search_submit">Submit</button>
+                </form>
+            </div>
+            <h3 class="section_heading">Active Users</h3>
+            <div class="user_item_info_heading">
+                <span class="item_info">First Name</span>
+                <span class="item_info">Last Name</span>
+                <span class="item_info">Gmail</span>
+                <span class="item_info">User Role</span>
+            </div>
+            <div id="admin_project_items">
+                
+                
+            </div>
+        </div>
+
+    </section>
+    <section class="project_section section_container_css">
+        <!-- <h2>Projects Section</h2> -->
+        <!-- Add search func here -->
+        <div class="search_section">
+
+        </div>
+        <div class="projects_section">
+            <div class="project_info_section">
+                <div class="search_section">
+                    <form action="" id="project_search_form">
+                        <input type="text" id="search_project_keyword_input" class="input_field_search" placeholder="Enter keyword" />
+                        <select name="projectKeyword" id="projectKeyword" class="input_field_search">
+                            <option value="title">Title</option>
+                            <option value="desc">Description</option>
+                        </select>
+                        <button type="submit" class="search_submit">Submit</button>
+                    </form>
+                </div>
+                <h3 class="section_heading">Active Projects</h3>
+                <div id="profile_project_items">
+                   
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </section>
+    <section class="model_section">
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal_content" >
+              <span class="close" id="close_model_handle">&times;</span>
+              <div class="model_info_content" id="model_content_handle">
+               
+              </div>
+            </div>
+          
+          </div>
+    </section>
+    <script src="../../../js/scripts/admin.js" type="module"></script>
+    <script src="https://kit.fontawesome.com/6661f72848.js" crossorigin="anonymous"></script>
+</body>
+
+</html>

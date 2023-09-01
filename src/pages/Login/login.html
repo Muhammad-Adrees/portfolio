@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
+    <title>Login</title>
+</head>
+<body>
+    <section class="login_section">
+        <h2 class="login_heading">Login Now</h2>
+        <form id="login_form">
+            <div className=''>
+
+            <div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class='input_field_login'
+                placeholder='Enter Email Address'
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class='input_field_login'           
+               placeholder='Enter Password'
+                required
+              />
+            </div>
+            <button type="submit" class='login_submit'>Login</button>
+          </form>
+          <div>
+            <span class='have_acc'>Don't Have an account? <a href="http://127.0.0.1:5501/src/pages/Register/Register.html">Register Now</a></span>
+          </div>
+    </section>
+    <script src="../../../js/scripts/login.js" type="module"></script>
+</body>
+</html>

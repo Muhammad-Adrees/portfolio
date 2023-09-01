@@ -1,0 +1,14 @@
+[
+    {
+        "userInfoId": 1,
+      "userId": 1,
+      "designation": "Web Engineer",
+      "location": "Lahore, Pakistan"
+    },
+    {
+      "userInfoId": 2,
+    "userId": 2,
+    "designation": "Software Engineer",
+    "location": "Lahore, Pakistan"
+  }
+]

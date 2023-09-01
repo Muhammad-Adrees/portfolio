@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="profile.css">
+    <title>Profile</title>
+</head>
+<body>
+    <nav>
+        <h2 class="logo_title" id="user_name"></h2>
+        <ul class="nav_bar">
+            <li class="nav_item"><a href="#about_container">About</a></li>
+            <li class="nav_item"><a href="#projects_section">Projects</a></li>
+            <li class="nav_item"><a href="#experience_container">Experience</a></li>
+            <li class="nav_item"><a href="#contact_section">Contact</a></li>
+            <li class="nav_item"><a href="/src/pages/Profile/profile.html">Profile</a></li>
+        </ul>
+        <div class="nav_btn_container" id="btn_nav_handle">
+            <button  class="btn_border" id="logout_btn_handle">Logout</button>
+            <a href="#contact_section" class="filled_btn" id="">Contact Now</a>
+        </div>
+
+    </nav>
+    <header>
+        <div class="header_image_container">
+            <img src="../../../public/profile.png" class="header-img" alt="avatar"/>
+        </div>
+        <div class="header_socials_container">
+            <i class="fa-solid fa-pen header_edit_socials" id="socials_handle"></i>
+            <div id="socials_header">
+                <div class="header_social_item contact_item">
+                    <i class="fa-brands fa-github header_social_icon contact_icon "></i>
+                    <span class="header_social_link contact_detail"><a>www.github.com</a></span>
+                </div>
+                <div class="header_social_item contact_item">
+                    <i class="fa-brands fa-github header_social_icon contact_icon"></i>
+                    <span class="header_social_link"><a>www.github.com</a></span>
+                </div>
+                <div class="header_social_item contact_item">
+                    <i class="fa-brands fa-github header_social_icon contact_icon"></i>
+                    <span class="header_social_link"><a>www.github.com</a></span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- info section -->
+    <section class="info_container section_container_css">
+        <i class="fa-solid fa-pen header_edit_socials edit_btn" id="info_handle"></i>
+        <div class="info_sub_container">
+            <div class="personal_info_container" id="info_id">
+                
+
+            </div>
+
+        </div>
+    </section>
+    <section class="about_container section_container_css">
+        <i class="fa-solid fa-pen edit_btn" id="about_handle"></i>
+        <div class="about_info_section">
+            <h3 class="section_heading">About</h3>
+            <p class="item_p" id="about_profile">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vel, libero. Iure, atque. Quam ex laboriosam sed fugiat minima error reiciendis cupiditate debitis optio aliquid aliquam, neque, sint ut mollitia at, iste omnis? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Pariatur amet vel voluptatibus veniam harum dignissimos ducimus autem eos aliquam placeat rerum nobis quae repellendus possimus obcaecati earum, ea inventore? Inventore assumenda aliquid aut iure!</p>
+
+        </div>
+    </section>
+    <section class="experience_section section_container_css">
+        <i class="fa-solid fa-pen edit_btn" id="experience_handle"></i>
+       
+        <div class="experience_info_section">
+            <div class="search_section">
+                <form action="" id="experience_search_form">
+                    <input type="text" id="search_experience_keyword_input" class="input_field_search" placeholder="Enter keyword" />
+                    <select name="experienceKeyword" id="experienceKeyword" class="input_field_search">
+                        <option value="companyName">Company Name</option>
+                        <option value="role">Company Role</option>
+                        <option value="desc">Description</option>
+                    </select>
+                    <button type="submit" class="search_submit">Submit</button>
+                </form>
+            </div>
+            <h3 class="section_heading">Experience</h3>
+            <div id="profile_experience_items">
+    
+
+            </div>
+
+
+        </div>
+    </section>
+    <section class="education_section section_container_css">
+        <i class="fa-solid fa-pen edit_btn" id="education_handle"></i>
+        <div class="education_info_section">
+            <div class="search_section">
+                <form action="" id="education_search_form">
+                    <input type="text" id="search_education_keyword_input" class="input_field_search" placeholder="Enter keyword" />
+                    <select name="educationKeyword" id="educationKeyword" class="input_field_search">
+                        <option value="instituteName">Institute Name</option>
+                        <option value="degree">Degree</option>
+                        <option value="location">Location</option>
+                    </select>
+                    <button type="submit" class="search_submit">Submit</button>
+                </form>
+            </div>
+            <h3 class="section_heading">Education</h3>
+            <div id="profile_education_items">
+
+               
+            </div>
+
+
+        </div>
+    </section>
+    <section class="project_section section_container_css">
+        <i class="fa-solid fa-pen edit_btn" id="project_handle"></i>
+        <div class="project_info_section">
+            <div class="search_section">
+                <form action="" id="project_search_form">
+                    <input type="text" id="search_project_keyword_input" class="input_field_search" placeholder="Enter keyword" />
+                    <select name="projectKeyword" id="projectKeyword" class="input_field_search">
+                        <option value="title">Title</option>
+                        <option value="desc">Description</option>
+                    </select>
+                    <button type="submit" class="search_submit">Submit</button>
+                </form>
+            </div>
+            <h3 class="section_heading">Projects</h3>
+            <div id="profile_project_items">
+    
+
+            </div>
+        
+
+
+        </div>
+        <div class="load_more_container">
+            <button class="btn_border">Load More</button>
+            <button class="filled_btn">Load All</button>
+        </div>
+    </section>
+
+    <section class="skill_section section_container_css">
+        <i class="fa-solid fa-pen edit_btn" id="skills_handle"></i>
+        <div class="education_info_section">
+            <h3 class="section_heading">Skills</h3>
+            <div id="profile_skills_items">
+            
+
+            </div>
+        </div>
+    </section>
+    <section class="model_section">
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal_content" >
+              <span class="close" id="close_model_handle">&times;</span>
+              <div class="model_info_content" id="model_content_handle">
+               
+              </div>
+            </div>
+          
+          </div>
+    </section>
+    <footer>
+        <p class="copyright">&copy; 2023- All rights reserved</p>
+        <div class="socials socials_footer" id="footer_socials">
+            <i class="fa-brands fa-twitter"></i>
+            <i class="fa-brands fa-linkedin-in"></i>
+            <i class="fa-brands fa-github"></i>
+        </div>
+    
+    </footer>
+    <script src="../../../js/scripts/profile.js" type="module"></script>
+    <script src="https://kit.fontawesome.com/6661f72848.js" crossorigin="anonymous"></script>
+</body>
+</html>

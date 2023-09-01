@@ -1,0 +1,18 @@
+[
+    {
+        "skillId": 1,
+        "userId": 1,
+        "skillName": "JavaScript",
+        "startDate":"Wed Mar 25 2015 00:00:00 GMT+0500 (Pakistan Standard Time)",
+        "endDate": "Wed Mar 25 2015 00:00:00 GMT+0500 (Pakistan Standard Time)",
+        "expertisePer":"30"
+    },
+    {
+        "skillId": 2,
+        "userId": 2,
+        "skillName": "HTML",
+        "startDate":"Wed Mar 25 2015 00:00:00 GMT+0500 (Pakistan Standard Time)",
+        "endDate": "Wed Mar 25 2015 00:00:00 GMT+0500 (Pakistan Standard Time)",
+        "expertisePer":"80"
+    }
+]

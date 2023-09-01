@@ -1,0 +1,65 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;1,900&display=swap');
+
+*{ /* universal tag  */ 
+    padding: 0px; /* give padding both to elments as well as to body itself*/
+    margin: 0px; /*if I add this to body tag then it will give padding to only body element/ container*/
+    font-family: var(--headFont);
+}
+:root {
+    --primary: #000000;
+    --secondary: #ffffff;
+    --theme:#1e90ff;
+    --gray:#1e1e1f;
+    --headFont:'Montserrat', sans-serif;
+  }
+
+
+
+  /* login section */
+  .login_section{
+    height: 98vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+  }
+
+  .input_field_login{
+    padding: 8px;
+    width: 300px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    border: 1px solid black;
+
+}
+.input_field_login:focus{
+    outline: none;
+}
+
+.input_field_login::placeholder{
+    color: rgb(17, 17, 17);
+    font-size: 13px;
+}
+
+.login_submit{
+    width: 8rem;
+    height: 2.4rem;
+    /* margin-top: 8px; */
+    background: transparent;
+    background-color: var(--theme);
+    border: none;
+    color: var(--secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 20px;
+}
+.login_heading{
+    margin-bottom: 20px;
+}
+
+.have_acc{
+    position: relative;
+    top: 10px;
+}
