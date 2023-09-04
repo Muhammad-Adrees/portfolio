@@ -210,7 +210,7 @@ function projectHandle(projects) {
     if (projects[i].exe === ".mp4") {
       media_str = `
       <div class="video_container">
-          <video width="400" controls>
+          <video controls>
               <source src=${projects[i].file} type="video/mp4">
             </video>
       </div>
@@ -218,7 +218,7 @@ function projectHandle(projects) {
     } else {
       media_str = `
       <div class="media_container">
-        <img src=${projects[i].file} width="400">
+        <img src=${projects[i].file}>
       </div>
       `;
     }
@@ -305,17 +305,20 @@ function contactHandle() {
   </div>
   <div class="email_contact">
       <i class="fa-solid fa-envelope"></i>
-      <span>${contactArr[0].email}</span>
+      <span><a class="text_link" href="mailto:${contactArr[0].email}" >${contactArr[0].email}</a></span>
   </div>
   <div class="phone_contact">
       <i class="fa-solid fa-phone"></i>
-      <span>${contactArr[0].phone}</span>
+      <span><a href="https://web.whatsapp.com/" class="text_link">${contactArr[0].phone}</a></span>
   </div>
 
   
   `;
 
   contact_detail.innerHTML = con_str;
+
+
+
 }
 
 function footerHandle() {
