@@ -5,6 +5,9 @@
     <title>Website</title>
 </head>
 <body>
+    <div id="loading" class="loader">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
     <nav>
         <h2 class="logo_title" id="user_name"></h2>
         <ul class="nav_bar">
@@ -71,8 +74,11 @@
             <form action="" id="project_search_form" class="search_con">
                 <input type="text" id="search_project_keyword_input" class="input_field_search" placeholder="Enter keyword" />
                 <select name="projectKeyword" id="projectKeyword" class="input_field_search">
+                    <option value="all">All</option>
                     <option value="title">Title</option>
                     <option value="desc">Description</option>
+                    <option value="lanName">Languages</option>
+                    <option value="tagName">Tags</option>
                 </select>
                 <button type="submit" class="search_submit">Submit</button>
             </form>
@@ -89,6 +95,7 @@
             <form action="" id="experience_search_form">
                 <input type="text" id="search_experience_keyword_input" class="input_field_search" placeholder="Enter keyword" />
                 <select name="experienceKeyword" id="experienceKeyword" class="input_field_search">
+                    <option value="all">All</option>
                     <option value="companyName">Company Name</option>
                     <option value="role">Company Role</option>
                     <option value="desc">Description</option>
@@ -133,7 +140,9 @@
         </div>
     
     </footer>
-    <script src="./js/index.js" type="module"></script>
+    
+
+    <script defer="true" src="./js/index.js" type="module" ></script>
     <script src="https://kit.fontawesome.com/6661f72848.js" crossorigin="anonymous"></script>
 </body>
 </html>

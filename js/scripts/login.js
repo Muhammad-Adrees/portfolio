@@ -1,6 +1,11 @@
 import { User_registration } from "../links.js";
 const login_form = document.getElementById("login_form");
 
+
+window.onload=function()
+{
+  document.getElementById("loading").style.display="none"
+}
 login_form.addEventListener("submit", (e) => {
   e.preventDefault();
   const data = new FormData(e.target);

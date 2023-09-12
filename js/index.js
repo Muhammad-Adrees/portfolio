@@ -16,23 +16,26 @@ let userId = 0;
 let userRole = "";
 let model_content_handle = document.getElementById("model_content_handle");
 let myModal = document.getElementById("myModal");
+
+userId = parseInt(localStorage.getItem("userId"));
+userRole = localStorage.getItem("userRole");
+console.log(userId);
+console.log(userRole);
+
+if (userRole === "admin" || !userRole) {
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userRole");
+
+  location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
+}
+
+
 window.onload = function () {
   // I have to get id from local storage after login and then find data from dataReceived based on id
   // and then passed to each function
-  userId = parseInt(localStorage.getItem("userId"));
-  userRole = localStorage.getItem("userRole");
-  console.log(userId);
-  console.log(userRole);
-
-  if (userRole === "admin" || !userRole) {
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userRole");
-
-    location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
-  }
-
+  document.getElementById("loading").style.display="none"
   // userId = ;
-
+ 
   userSpecificData();
   modifyDOM();
 
@@ -204,6 +207,16 @@ function projectHandle(projects) {
   let project_items = document.getElementById("project_items");
 
   let pro_str = "";
+  if(projects.length===0)
+  {
+    pro_str=
+    `
+    <p class="no_result_text">No project found</p>
+    `
+    project_items.innerHTML=pro_str
+    return;
+  }
+
 
   for (let i = 0; i < projects.length; i++) {
     let media_str = "";
@@ -222,6 +235,47 @@ function projectHandle(projects) {
       </div>
       `;
     }
+    // for languages and tags
+    let lan_str='',tag_str=''
+
+    if(projects[i].languages.length>0)
+    {
+      for (let j = 0; j < projects[i].languages.length; j++) 
+      {
+
+        lan_str=lan_str+`
+        
+        <div class="lan_item">
+            <span class="lan_item_lan">${projects[i].languages[j].lanName} <span  class="lan_item_per">${projects[i].languages[j].lanPer}%</span></span>
+            <progress class="lan_item_pro" value='${projects[i].languages[j].lanPer}' max="100"></progress>
+        </div>
+        
+        `
+      }
+    }
+    if(projects[i].tags.length>0)
+    {
+      for (let k = 0; k < projects[i].tags.length; k++) 
+      {
+        if(k==0)
+        {
+          tag_str=tag_str+`
+          <div class="tag_container">
+          <p class="tag_head"> Tags:</p>
+          `
+        }
+        tag_str=tag_str+`
+        
+        <span class="tag_item">${projects[i].tags[k].tagName}</span>
+        
+        `
+      }
+
+      tag_str=tag_str+`
+      </div>
+      `
+    }
+
     pro_str =
       pro_str +
       `
@@ -230,6 +284,8 @@ function projectHandle(projects) {
           <input style="display: none;" value="${projects[i].projectId}">
           <p class="project_title">${projects[i].title}</p>
           <p class="project_detail">${DescSlice(projects[i].desc)}</p>
+          ${lan_str}
+          ${tag_str}
           <div class="project_btn_container">
               <a href="${
                 projects[i].sourceLink
@@ -263,6 +319,15 @@ function experienceHandle(experience) {
   let experience_items = document.getElementById("experience_items");
 
   let exp_st = "";
+  if(experience.length===0)
+  {
+    exp_st=
+    `
+    <p class="no_result_text">No experience found</p>
+    `
+    experience_items.innerHTML=exp_st
+    return;
+  }
 
   for (let i = 0; i < experience.length; i++) {
     exp_st =
@@ -370,10 +435,52 @@ function projectView(id) {
     </div>
     `;
   }
+  let lan_str='',tag_str=''
+
+  if(clickedProject[0].languages.length>0)
+  {
+    for (let j = 0; j < clickedProject[0].languages.length; j++) 
+    {
+
+      lan_str=lan_str+`
+      
+      <div class="lan_item">
+          <span class="lan_item_lan">${clickedProject[0].languages[j].lanName} <span  class="lan_item_per">${clickedProject[0].languages[j].lanPer}%</span></span>
+          <progress class="lan_item_pro" value='${clickedProject[0].languages[j].lanPer}' max="100"></progress>
+      </div>
+      
+      `
+    }
+  }
+  if(clickedProject[0].tags.length>0)
+  {
+    for (let k = 0; k < clickedProject[0].tags.length; k++) 
+    {
+      if(k==0)
+      {
+        tag_str=tag_str+`
+        <div class="tag_container">
+        <p class="tag_head"> Tags:</p>
+        `
+      }
+      tag_str=tag_str+`
+      
+      <span class="tag_item">${clickedProject[0].tags[k].tagName}</span>
+      
+      `
+    }
+
+    tag_str=tag_str+`
+    </div>
+    `
+  }
   let str =`
   ${media_str}
   <p class="model_title">${clickedProject[0].title}</p>
-  <p class="model_detail">${clickedProject[0].desc}</p>`
+  <p class="model_detail">${clickedProject[0].desc}</p>
+  ${lan_str}
+  ${tag_str}
+  `
 
 
   model_content_handle.innerHTML = str;
@@ -441,20 +548,69 @@ project_search_form.addEventListener("submit",(e)=>{
   let select_val=projectKeyword.value;
   if(select_val==="title")
   {
-    searchedProjectArr = projectsArr.filter((item) => {
-      return item.title.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedProjectArr=checkInTitle(projectsArr,input_val)
   }
   else if(select_val==="desc")
   {
+
+    searchedProjectArr=checkInDesc(projectsArr,input_val)
+  }else if(select_val==="all")
+  {
     searchedProjectArr = projectsArr.filter((item) => {
-      return item.desc.toLowerCase().includes(input_val.toLowerCase());
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
     });
+    console.log(searchedProjectArr)
+  }else if(select_val==="lanName")
+  {
+    searchedProjectArr =checkInLan(projectsArr,input_val)
+  }
+  else if(select_val==="tagName")
+  {
+    searchedProjectArr = checkInTag(projectsArr,input_val)
   }
   projectHandle(searchedProjectArr)
 
 
-})
+});
+
+
+function checkInDesc(projectsArr,input_val){
+  return   projectsArr.filter((item) => {
+    return item.desc.toLowerCase().includes(input_val.toLowerCase());
+  });
+}
+function checkInTag(projectsArr,input_val){
+  return projectsArr.filter((item) => {
+    for (let i = 0; i < item.tags.length; i++) {
+      if(item.tags[i].tagName.toLowerCase().includes(input_val.toLowerCase()))
+        {
+          console.log(item)
+          return item;
+        }
+      
+    }
+    
+  });
+}
+function checkInTitle(projectsArr,input_val){
+ const searchedProjectArr = projectsArr.filter((item) => {
+    return item.title.toLowerCase().includes(input_val.toLowerCase());
+  });
+  return searchedProjectArr;
+}
+function checkInLan(projectsArr,input_val){
+  return projectsArr.filter((item) => {
+    for (let i = 0; i < item.languages.length; i++) {
+      if(item.languages[i].lanName.toLowerCase().includes(input_val.toLowerCase()))
+        {
+          console.log(item)
+          return item;
+        }
+      
+    }
+    
+  });
+}
 
 search_project_keyword_input.onchange=function(){
 
@@ -462,34 +618,52 @@ search_project_keyword_input.onchange=function(){
   let select_val=projectKeyword.value;
   if(select_val==="title")
   {
-    searchedProjectArr = projectsArr.filter((item) => {
-      return item.title.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedProjectArr=checkInTitle(projectsArr,input_val)
   }
   else if(select_val==="desc")
   {
+
+    searchedProjectArr=checkInDesc(projectsArr,input_val)
+  }else if(select_val==="all")
+  {
     searchedProjectArr = projectsArr.filter((item) => {
-      return item.desc.toLowerCase().includes(input_val.toLowerCase());
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
     });
+  }else if(select_val==="lanName")
+  {
+    searchedProjectArr =checkInLan(projectsArr,input_val)
+  }
+  else if(select_val==="tagName")
+  {
+    searchedProjectArr = checkInTag(projectsArr,input_val)
   }
   projectHandle(searchedProjectArr)
  
 }
 projectKeyword.onchange=function(){
+ 
   let input_val=search_project_keyword_input.value;
   let select_val=projectKeyword.value;
- 
   if(select_val==="title")
   {
-    searchedProjectArr = projectsArr.filter((item) => {
-      return item.title.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedProjectArr=checkInTitle(projectsArr,input_val)
   }
   else if(select_val==="desc")
   {
+
+    searchedProjectArr=checkInDesc(projectsArr,input_val)
+  }else if(select_val==="all")
+  {
     searchedProjectArr = projectsArr.filter((item) => {
-      return item.desc.toLowerCase().includes(input_val.toLowerCase());
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
     });
+  }else if(select_val==="lanName")
+  {
+    searchedProjectArr =checkInLan(projectsArr,input_val)
+  }
+  else if(select_val==="tagName")
+  {
+    searchedProjectArr = checkInTag(projectsArr,input_val)
   }
   projectHandle(searchedProjectArr)
 }
@@ -507,24 +681,25 @@ let searchedExperienceArr=[]
 experience_search_form.addEventListener("submit",(e)=>{
 
   e.preventDefault();
+  
   let input_val=search_experience_keyword_input.value;
   let select_val=experienceKeyword.value;
   if(select_val==="companyName")
   {
-    searchedExperienceArr = experienceArr.filter((item) => {
-      return item.companyName.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedExperienceArr = checkInCompanyName(experienceArr,input_val)
   }
   else if(select_val==="role")
   {
-    searchedExperienceArr = experienceArr.filter((item) => {
-      return item.role.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedExperienceArr = checkInCompanyRole(experienceArr,input_val)
   }
   else if(select_val==="desc")
   {
-    searchedExperienceArr = experienceArr.filter((item) => {
-      return item.desc.toLowerCase().includes(input_val.toLowerCase());
+    searchedExperienceArr = checkInExperienceDesc(experienceArr,input_val)
+  }
+  else if(select_val==="all")
+  {
+    searchedExperienceArr= experienceArr.filter((item) => {
+      return checkInCompanyName(Array(item),input_val).length>0 || checkInCompanyRole(Array(item),input_val).length>0 || checkInExperienceDesc(Array(item),input_val).length>0
     });
   }
   experienceHandle(searchedExperienceArr)
@@ -538,46 +713,64 @@ search_experience_keyword_input.onchange=function(){
   let select_val=experienceKeyword.value;
   if(select_val==="companyName")
   {
-    searchedExperienceArr = experienceArr.filter((item) => {
-      return item.companyName.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedExperienceArr = checkInCompanyName(experienceArr,input_val)
   }
   else if(select_val==="role")
   {
-    searchedExperienceArr = experienceArr.filter((item) => {
-      return item.role.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedExperienceArr = checkInCompanyRole(experienceArr,input_val)
   }
   else if(select_val==="desc")
   {
-    searchedExperienceArr = experienceArr.filter((item) => {
-      return item.desc.toLowerCase().includes(input_val.toLowerCase());
+    searchedExperienceArr = checkInExperienceDesc(experienceArr,input_val)
+  }
+  else if(select_val==="all")
+  {
+    searchedExperienceArr= experienceArr.filter((item) => {
+      return checkInCompanyName(Array(item),input_val).length>0 || checkInCompanyRole(Array(item),input_val).length>0 || checkInExperienceDesc(Array(item),input_val).length>0
     });
   }
   experienceHandle(searchedExperienceArr)
  
 }
 experienceKeyword.onchange=function(){
-  e.preventDefault();
   let input_val=search_experience_keyword_input.value;
   let select_val=experienceKeyword.value;
   if(select_val==="companyName")
   {
-    searchedExperienceArr = experienceArr.filter((item) => {
-      return item.companyName.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedExperienceArr = checkInCompanyName(experienceArr,input_val)
   }
   else if(select_val==="role")
   {
-    searchedExperienceArr = experienceArr.filter((item) => {
-      return item.role.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedExperienceArr = checkInCompanyRole(experienceArr,input_val)
   }
   else if(select_val==="desc")
   {
-    searchedExperienceArr = experienceArr.filter((item) => {
-      return item.desc.toLowerCase().includes(input_val.toLowerCase());
+    searchedExperienceArr = checkInExperienceDesc(experienceArr,input_val)
+  }
+  else if(select_val==="all")
+  {
+    searchedExperienceArr= experienceArr.filter((item) => {
+      return checkInCompanyName(Array(item),input_val).length>0 || checkInCompanyRole(Array(item),input_val).length>0 || checkInExperienceDesc(Array(item),input_val).length>0
     });
   }
   experienceHandle(searchedExperienceArr)
+}
+
+
+
+
+function checkInExperienceDesc(expArr,input_val){
+  return expArr.filter((item) => {
+    return item.desc.toLowerCase().includes(input_val.toLowerCase());
+  });
+}
+function checkInCompanyName(expArr,input_val){
+  return expArr.filter((item) => {
+    return item.companyName.toLowerCase().includes(input_val.toLowerCase());
+  });
+}
+function checkInCompanyRole(expArr,input_val){
+  return expArr.filter((item) => {
+    return item.role.toLowerCase().includes(input_val.toLowerCase());
+  });
 }

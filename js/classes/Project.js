@@ -5,12 +5,15 @@ export class Project {
     this.projectId = 0;
     this.userId = 0;
     this.file = "";
-    (this.exe = ""), (this.title = "");
+    (this.exe = "");
+    (this.title = "");
     this.startDate = "";
     this.endDate = "";
     this.desc = "";
     this.sourceLink = "";
     this.liveLink = "";
+    this.languages=[];
+    this.tags=[];
   }
   // Perform CRUD
 
@@ -45,6 +48,8 @@ export class Project {
     }
     console.log("index:" + ProjectIn);
 
+    console.log("Updated version--------")
+    console.log(upProject)
     // update object
     const updatedVersion = {
       projectId: id,
@@ -57,6 +62,9 @@ export class Project {
       desc: upProject.desc,
       sourceLink: upProject.sourceLink,
       liveLink: upProject.liveLink,
+      languages:upProject.languages,
+      tags:upProject.tags,
+
     };
     ProjectArr[ProjectIn] = updatedVersion;
     console.log(ProjectArr);

@@ -11,7 +11,9 @@ let userId = 0;
 let userRole = "";
 let model_content_handle = document.getElementById("model_content_handle");
 let myModal = document.getElementById("myModal");
+
 window.onload = function () {
+  document.getElementById("loading").style.display="none"
   userId = parseInt(localStorage.getItem("userId"));
   userRole = localStorage.getItem("userRole");
   if (!userRole) {
@@ -121,6 +123,15 @@ function dateSlice(dt) {
 function projectHandle(project) {
   let profile_project_items = document.getElementById("profile_project_items");
   let pro_str = "";
+  if(project.length===0)
+  {
+    pro_str=
+    `
+    <p class="no_result_text">No project found</p>
+    `
+    profile_project_items.innerHTML=pro_str
+    return;
+  }
 
   for (let i = 0; i < project.length; i++) {
     let media_str = "";
@@ -139,6 +150,47 @@ function projectHandle(project) {
     </div>
       `;
     }
+
+
+    let lan_str='',tag_str=''
+
+    if(project[i].languages.length>0)
+    {
+      for (let j = 0; j < project[i].languages.length; j++) 
+      {
+
+        lan_str=lan_str+`
+        
+        <div class="lan_item">
+            <span class="lan_item_lan">${project[i].languages[j].lanName} <span  class="lan_item_per">${project[i].languages[j].lanPer}%</span></span>
+            <progress class="lan_item_pro" value='${project[i].languages[j].lanPer}' max="100"></progress>
+        </div>
+        
+        `
+      }
+    }
+    if(project[i].tags.length>0)
+    {
+      for (let k = 0; k < project[i].tags.length; k++) 
+      {
+        if(k==0)
+        {
+          tag_str=tag_str+`
+          <div class="tag_container">
+          <p class="tag_head"> Tags:</p>
+          `
+        }
+        tag_str=tag_str+`
+        
+        <span class="tag_item">${project[i].tags[k].tagName}</span>
+        
+        `
+      }
+
+      tag_str=tag_str+`
+      </div>
+      `
+    }
     pro_str =
       pro_str +
       `
@@ -154,6 +206,8 @@ function projectHandle(project) {
             </div>
         </div>
         <p class="item_p">${project[i].desc}</p>
+        ${lan_str}
+        ${tag_str}
 
         <button class="filled_btn project_delete_btn">Delete Project</button>
         <hr class="item_divider">
@@ -194,48 +248,47 @@ function updateForm(id)
     });
     str=`<form id="user_form">
     <div className=''>
+    <label for="firstName" class="label_input">First Name:</label>
     <input
         type="text"
         id="firstName"
         name="firstName"
         value=${clickedUser[0].firstName}
         class='input_field'
-        placeholder='Enter First Name'
+        placeholder='Enter First Name Here'
         required
       />
     </div>
     <div className=''>
+    <label for="lastName" class="label_input">Last Name:</label>
       <input
         type="text"
         id="lastName"
         name="lastName"
         value=${clickedUser[0].lastName}
         class='input_field'
-        placeholder='Enter Last Name'
+        placeholder='Enter Last Name Here'
         required
       />
     </div>
     <div className=''>
+    <label for="email" class="label_input">Email:</label>
         <input
           type="email"
           id="email"
           name="email"
           value=${clickedUser[0].email}
           class='input_field'
-          placeholder='Enter Email'
+          placeholder='Enter Email Here'
           required
         />
       </div>
         <div className=''>
-            <input
-            type="text"
-            id="role"
-            name="role"
-            value=${clickedUser[0].userRole}
-            class='input_field'
-            placeholder='Enter User Role'
-            
-          />
+        <label for="userRole" class="label_input">Select User Role:</label>
+        <select name="userRole" id="userRole" class="input_field">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
         </div>
       
         <button type="submit" class='user_submit filled_btn' id="user_submit_btn">Update User</button>
@@ -246,54 +299,44 @@ function updateForm(id)
   {
     str=`<form id="user_form">
     <div className=''>
+    <label for="firstName" class="label_input">First Name:</label>
     <input
         type="text"
         id="firstName"
         name="firstName"
         class='input_field'
-        placeholder='Enter First Name'
+        placeholder='Enter First Name Here'
         required
       />
     </div>
     <div className=''>
+    <label for="lastName" class="label_input">Last Name:</label>
       <input
         type="text"
         id="lastName"
         name="lastName"
         class='input_field'
-        placeholder='Enter Last Name'
+        placeholder='Enter Last Name Here'
         required
       />
     </div>
     <div className=''>
+    <label for="email" class="label_input">Email:</label>
         <input
           type="email"
           id="email"
           name="email"
           class='input_field'
-          placeholder='Enter Email'
-          required
-        />
-      </div>
-    <div className=''>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          class='input_field'
-          placeholder='Enter Password'
+          placeholder='Enter Email Here'
           required
         />
       </div>
         <div className=''>
-            <input
-            type="text"
-            id="role"
-            name="role"
-            class='input_field'
-            placeholder='Enter User Role'
-            
-          />
+        <label for="userRole" class="label_input">Select User Role:</label>
+        <select name="userRole" id="userRole" class="input_field">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
         </div>
       
         <button type="submit" class='user_submit filled_btn' id="user_submit_btn">Add User</button>
@@ -380,18 +423,27 @@ project_search_form.addEventListener("submit",(e)=>{
   let select_val=projectKeyword.value;
   if(select_val==="title")
   {
-    searchedProjectArr = projectsArr.filter((item) => {
-      return item.title.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedProjectArr=checkInTitle(projectsArr,input_val)
   }
   else if(select_val==="desc")
   {
+
+    searchedProjectArr=checkInDesc(projectsArr,input_val)
+  }else if(select_val==="all")
+  {
     searchedProjectArr = projectsArr.filter((item) => {
-      return item.desc.toLowerCase().includes(input_val.toLowerCase());
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
     });
+    console.log(searchedProjectArr)
+  }else if(select_val==="lanName")
+  {
+    searchedProjectArr =checkInLan(projectsArr,input_val)
+  }
+  else if(select_val==="tagName")
+  {
+    searchedProjectArr = checkInTag(projectsArr,input_val)
   }
   projectHandle(searchedProjectArr)
-
 
 })
 
@@ -401,15 +453,25 @@ search_project_keyword_input.onchange=function(){
   let select_val=projectKeyword.value;
   if(select_val==="title")
   {
-    searchedProjectArr = projectsArr.filter((item) => {
-      return item.title.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedProjectArr=checkInTitle(projectsArr,input_val)
   }
   else if(select_val==="desc")
   {
+
+    searchedProjectArr=checkInDesc(projectsArr,input_val)
+  }else if(select_val==="all")
+  {
     searchedProjectArr = projectsArr.filter((item) => {
-      return item.desc.toLowerCase().includes(input_val.toLowerCase());
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
     });
+    console.log(searchedProjectArr)
+  }else if(select_val==="lanName")
+  {
+    searchedProjectArr =checkInLan(projectsArr,input_val)
+  }
+  else if(select_val==="tagName")
+  {
+    searchedProjectArr = checkInTag(projectsArr,input_val)
   }
   projectHandle(searchedProjectArr)
  
@@ -417,24 +479,70 @@ search_project_keyword_input.onchange=function(){
 projectKeyword.onchange=function(){
   let input_val=search_project_keyword_input.value;
   let select_val=projectKeyword.value;
- 
   if(select_val==="title")
   {
-    searchedProjectArr = projectsArr.filter((item) => {
-      return item.title.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedProjectArr=checkInTitle(projectsArr,input_val)
   }
   else if(select_val==="desc")
   {
+
+    searchedProjectArr=checkInDesc(projectsArr,input_val)
+  }else if(select_val==="all")
+  {
     searchedProjectArr = projectsArr.filter((item) => {
-      return item.desc.toLowerCase().includes(input_val.toLowerCase());
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
     });
+    console.log(searchedProjectArr)
+  }else if(select_val==="lanName")
+  {
+    searchedProjectArr =checkInLan(projectsArr,input_val)
+  }
+  else if(select_val==="tagName")
+  {
+    searchedProjectArr = checkInTag(projectsArr,input_val)
   }
   projectHandle(searchedProjectArr)
 }
 
 
 
+function checkInDesc(projectsArr,input_val){
+  return   projectsArr.filter((item) => {
+    return item.desc.toLowerCase().includes(input_val.toLowerCase());
+  });
+}
+function checkInTag(projectsArr,input_val){
+  return projectsArr.filter((item) => {
+    for (let i = 0; i < item.tags.length; i++) {
+      if(item.tags[i].tagName.toLowerCase().includes(input_val.toLowerCase()))
+        {
+          console.log(item)
+          return item;
+        }
+      
+    }
+    
+  });
+}
+function checkInTitle(projectsArr,input_val){
+ const searchedProjectArr = projectsArr.filter((item) => {
+    return item.title.toLowerCase().includes(input_val.toLowerCase());
+  });
+  return searchedProjectArr;
+}
+function checkInLan(projectsArr,input_val){
+  return projectsArr.filter((item) => {
+    for (let i = 0; i < item.languages.length; i++) {
+      if(item.languages[i].lanName.toLowerCase().includes(input_val.toLowerCase()))
+        {
+          console.log(item)
+          return item;
+        }
+      
+    }
+    
+  });
+}
 
 
 

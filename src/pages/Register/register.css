@@ -14,7 +14,17 @@
     --headFont:'Montserrat', sans-serif;
   }
 
-
+  .loader{
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 22222222;
+    
+}
 
   /* register section */
   .register_section{

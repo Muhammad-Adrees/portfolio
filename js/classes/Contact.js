@@ -27,6 +27,7 @@ export class Contact {
     ContactArr.push(contact);
     // download the file
     this.#download(ContactArr);
+    
   }
   updateContact(userid, upContact) {
     // search particular Contact id then update data then save json

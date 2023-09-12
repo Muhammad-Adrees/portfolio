@@ -9,6 +9,9 @@
 </head>
 
 <body>
+    <div id="loading" class="loader">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
     <nav>
         <h2 class="logo_title" id="user_name"></h2>
         <ul class="nav_bar">
@@ -23,7 +26,8 @@
         <div class="user_info_section">
             <div class="search_section">
                 <form action="" id="user_search_form">
-                    <input type="text" id="search_user_keyword_input" class="input_field_search" placeholder="Enter keyword" />
+                    <input type="text" id="search_user_keyword_input" class="input_field_search"
+                        placeholder="Enter keyword" />
                     <select name="userKeyword" id="userKeyword" class="input_field_search">
                         <option value="firstName">First Name</option>
                         <option value="lastName">Last Name</option>
@@ -41,8 +45,8 @@
                 <span class="item_info">User Role</span>
             </div>
             <div id="admin_project_items">
-                
-                
+
+
             </div>
         </div>
 
@@ -57,17 +61,21 @@
             <div class="project_info_section">
                 <div class="search_section">
                     <form action="" id="project_search_form">
-                        <input type="text" id="search_project_keyword_input" class="input_field_search" placeholder="Enter keyword" />
+                        <input type="text" id="search_project_keyword_input" class="input_field_search"
+                            placeholder="Enter keyword" />
                         <select name="projectKeyword" id="projectKeyword" class="input_field_search">
+                            <option value="all">All</option>
                             <option value="title">Title</option>
                             <option value="desc">Description</option>
+                            <option value="lanName">Languages</option>
+                            <option value="tagName">Tags</option>
                         </select>
                         <button type="submit" class="search_submit">Submit</button>
                     </form>
                 </div>
                 <h3 class="section_heading">Active Projects</h3>
                 <div id="profile_project_items">
-                   
+
 
                 </div>
 
@@ -79,14 +87,14 @@
     <section class="model_section">
         <div id="myModal" class="modal">
             <!-- Modal content -->
-            <div class="modal_content" >
-              <span class="close" id="close_model_handle">&times;</span>
-              <div class="model_info_content" id="model_content_handle">
-               
-              </div>
+            <div class="modal_content">
+                <span class="close" id="close_model_handle">&times;</span>
+                <div class="model_info_content" id="model_content_handle">
+
+                </div>
             </div>
-          
-          </div>
+
+        </div>
     </section>
     <script src="../../../js/scripts/admin.js" type="module"></script>
     <script src="https://kit.fontawesome.com/6661f72848.js" crossorigin="anonymous"></script>
