@@ -1,24 +1,27 @@
 import url from "../../utils/config.json" assert { type: "json" };
 
-export class About {
+export class projectLanguage {
   // initialize values in constructor
   constructor() {
-    this.about_id = 0;
+    this.project_language_id = 0;
     this.user_id = 0;
-    this.description = "";
+    this.project_id = "";
+    this.lan_name = "";
+    this.lan_percentage = "";
   }
   // Perform CRUD
 
-  addAbout=async(token,about) =>{
-    // read JSON file and append new About
+  addprojectLanguage=async(token,project_id,projectlanguage) =>{
+    // read JSON file and append new projectLanguage
     try {
-      const res = await fetch(`${url.BASE_URL}/api/about`, {
+      const res = await fetch(`${url.BASE_URL}/api/projectlanguage`, {
         method: "POST",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "auth_token":token,
+          "project_id":project_id
         },
-        body: JSON.stringify(about),
+        body: JSON.stringify(projectlanguage),
       });
 
 
@@ -45,15 +48,15 @@ export class About {
       };
     }
   }
-  updateAbout=async(token,aboutId, upAbout) =>{
+  updateprojectLanguage=async(token,projectLanguageId, upprojectLanguage) =>{
     try {
-      const res = await fetch(`${url.BASE_URL}/api/about/${aboutId}`, {
+      const res = await fetch(`${url.BASE_URL}/api/projectlanguage/${projectLanguageId}`, {
         method: "PUT",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "auth_token":token, 
         },
-        body: JSON.stringify(upAbout),
+        body: JSON.stringify(upprojectLanguage),
       });
 
 
@@ -81,13 +84,14 @@ export class About {
     }
    
   }
-  deleteAbout=async(token,id)=> {
+  deleteAllprojectLanguage=async(token,project_id)=> {
     try {
-      const res = await fetch(`${url.BASE_URL}/api/about/${id}`, {
-        method: "DELETE",
+      const res = await fetch(`${url.BASE_URL}/api/projectlanguage/`, {
+        method: "DELETE", 
         headers: {
           "content-type":"application/json",
-          "auth_token":token
+          "auth_token":token,
+          "project_id":project_id
         }
       });
       const result = await res.json();
@@ -114,11 +118,11 @@ export class About {
     }
     
   }
-  getAbout=async(token)=> {
+  getprojectLanguage=async(token)=> {
 
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/about`,{
+      const response = await fetch(`${url.BASE_URL}/api/projectlanguage`,{
           method:"GET",
           headers:{
               "content-type":"application/json",
@@ -151,11 +155,11 @@ export class About {
     }
   
   }
-  getSingleAbout=async(token,id)=> {
+  getSingleprojectLanguage=async(token,id)=> {
     
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/about/${id}`,{
+      const response = await fetch(`${url.BASE_URL}/api/projectlanguage/${id}`,{
           method:"GET",
           headers:{
               "content-type":"application/json",

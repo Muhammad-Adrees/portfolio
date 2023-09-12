@@ -2,16 +2,16 @@ import projectData from "../Api/Projects.json" assert { type: "json" };
 export class Project {
   // initialize values in constructor
   constructor() {
-    this.projectId = 0;
-    this.userId = 0;
+    this.project_id = 0;
+    this.user_id = 0;
     this.file = "";
-    (this.exe = "");
-    (this.title = "");
-    this.startDate = "";
-    this.endDate = "";
+    this.exe = "";
+    this.title = "";
+    this.start_date = "";
+    this.end_date = "";
     this.desc = "";
-    this.sourceLink = "";
-    this.liveLink = "";
+    this.source_link = "";
+    this.live_link = "";
     this.languages=[];
     this.tags=[];
   }

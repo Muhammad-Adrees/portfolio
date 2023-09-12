@@ -1,108 +1,192 @@
-import userInfoData from "../Api/User_Info.json" assert { type: "json" };
+import url from "../../utils/config.json" assert { type: "json" };
 export class User_Info {
   // initialize values in constructor
   constructor() {
-    this.userInfoId = 0;
-    this.userId = 0;
+    this.user_info_id = 0;
+    this.user_id = 0;
     this.designation = "";
     this.location = "";
   }
   // Perform CRUD
 
-  adduserInfo(userInfo) {
-    // read JSON file and append new userInfo
-
-    // get data from .json
-    const userInfoArr = this.getuserInfos();
-    const size = userInfoArr.length;
-    // add id
-    userInfo.userInfoId = size + 1;
-    // push to the fetched array
-    userInfoArr.push(userInfo);
-    // download the file
-    this.#download(userInfoArr);
-  }
-  updateuserInfo(userid, upuserInfo) {
-    // search particular userInfo id then update data then save json
-
-    // get data from .json
-    const userInfoArr = this.getuserInfos();
-
-    // search for specific index, one having userId=userid and userInfoId=id
-    console.log(userInfoArr);
-    let userInfoIn = -1;
-
-    for (let i = 0; i < userInfoArr.length; i++) {
-      if (
-        userInfoArr[i].userId === userid
-      ) {
-        userInfoIn = i;
-        break;
-      }
-    }
-    console.log("index:" + userInfoIn);
-
-    // update object
-    const updatedVersion = {
-      userInfoId:userInfoArr[userInfoIn].userInfoId,
-      userId: userid,
-      designation: upuserInfo.designation,
-      location: upuserInfo.location,
-    };
-    userInfoArr[userInfoIn] = updatedVersion;
-    console.log(userInfoArr);
-    // download the file
-    this.#download(userInfoArr);
-  }
-  deleteuserInfo(id) {
-    // delete userInfo with particular id and then save
-    // getting array of objects
-    const userInfoArr = this.getuserInfos();
-
-    // filter array where userInfoId!=id
-
-    const filteredResult = userInfoArr.filter((curr) => {
-      return curr.userInfoId != id;
-    });
-
-    // download the file
-    this.#download(filteredResult);
-  }
-  getuserInfos() {
-    // get all userInfo
+  addUserInfo=async(token,UserInfo) =>{
+    // read JSON file and append new UserInfo
     try {
-      const data = userInfoData;
-      return data;
+      const res = await fetch(`${url.BASE_URL}/api/userinfo`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "auth_token":token
+        },
+        body: JSON.stringify(UserInfo),
+      });
+
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+  }
+  updateUserInfo=async(token,UserInfoId, upUserInfo) =>{
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/userinfo/${UserInfoId}`, {
+        method: "PUT",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "auth_token":token
+        },
+        body: JSON.stringify(upUserInfo),
+      });
+
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+   
+  }
+  deleteUserInfo=async(token,id)=> {
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/userinfo/${id}`, {
+        method: "DELETE", 
+        headers: {
+          "content-type":"application/json",
+          "auth_token":token
+        }
+      });
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+    
+  }
+  getUserInfo=async(token)=> {
+
+
+    try {
+      const response = await fetch(`${url.BASE_URL}/api/userinfo`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "auth_token":token
+          }
+      });
+      const result = await response.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+        result
+      };
+      
+      
+      
     } catch (err) {
       console.log(err);
     }
+  
   }
-  getSingleuserInfo(userid, id) {
-    // get single userInfo by id
+  getSingleUserInfo=async(token,id)=> {
+    
 
-    // getting array of objects
-    const userInfoArr = this.getuserInfos();
+    try {
+      const response = await fetch(`${url.BASE_URL}/api/userinfo/${id}`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "auth_token":token
+          }
+      });
+      const result = await response.json();
 
-    // search for specific one having userId=userid and userInfoId=id
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
 
-    return userInfoArr.filter((curr) => {
-      return curr.userInfoId === id && curr.userId === userid;
-    })[0];
-  }
-  #download(arr) {
-    const fileName = "user_Info.json";
-    let jsonText = JSON.stringify(arr);
-    let ele = document.createElement("a");
-    ele.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(jsonText)
-    );
-
-    ele.setAttribute("download", fileName);
-    ele.style.display = "none";
-    document.body.appendChild(ele);
-    console.log(ele);
-    ele.click();
-    document.body.removeChild(ele);
+      return{
+        status:response.status,
+        message:result.message,
+        result
+      };
+      
+      
+      
+    } catch (err) {
+      console.log(err);
+    }
+  
+  
   }
 }

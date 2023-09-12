@@ -1,123 +1,194 @@
-import user from "../Api/User.json" assert { type: "json" };
+import url from "../../utils/config.json" assert { type: "json" };
 export class User_registration {
   // initialize values in constructor
   constructor() {
-    this.userId = 0;
-    this.firstName = "";
-    this.lastName = "";
+    this.user_id = 0;
+    this.first_name = "";
+    this.last_name = "";
     this.email = "";
     this.password = "";
-    this.userRole = "user";
+    this.user_role = "user";
   }
   // Perform CRUD
 
-  addUser(User) {
+  addUser=async(token,User) =>{
     // read JSON file and append new User
-
-    // get data from .json
-    const UserArr = this.getUsers();
-    const size = UserArr.length;
-    // add id
-    User.userId = size + 1;
-    // push to the fetched array
-    UserArr.push(User);
-    // download the file
-    this.#download(UserArr);
-  }
-  updateUser(id, upUser) {
-    // search particular User id then update data then save json
-
-    // get data from .json
-    const UserArr = this.getUsers();
-
-    // search for specific index, one having userId=userId and userId=id
-    console.log(UserArr);
-    let UserIn = -1;
-
-    for (let i = 0; i < UserArr.length; i++) {
-      if (UserArr[i].userId === id) {
-        UserIn = i;
-        break;
-      }
-    }
-
-    // update object
-    const updatedVersion = {
-      userId: id,
-      firstName: upUser.firstName,
-      lastName: upUser.lastName,
-      email: upUser.email,
-      password: upUser.password,
-      userRole: upUser.userRole,
-    };
-    UserArr[UserIn] = updatedVersion;
-    console.log(UserArr);
-    // download the file
-    this.#download(UserArr);
-  }
-  deleteUser(id) {
-    // delete User with particular id and then save
-    // getting array of objects
-    const UserArr = this.getUsers();
-
-    // filter array where userId!=id
-
-    const filteredResult = UserArr.filter((curr) => {
-      return curr.userId != id;
-    });
-
-    // download the file
-    this.#download(filteredResult);
-  }
-  getUsers() {
-    // get all User
     try {
-      const data = user;
-      return data;
+      const res = await fetch(`${url.BASE_URL}/api/user`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "auth_token":token
+        },
+        body: JSON.stringify(User),
+      });
+
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+  }
+  updateUser=async(token,UserId, upUser) =>{
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/user/${UserId}`, {
+        method: "PUT",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "auth_token":token
+        },
+        body: JSON.stringify(upUser),
+      });
+
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+   
+  }
+  deleteUser=async(token,id)=> {
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/user/${id}`, {
+        method: "DELETE", 
+        headers: {
+          "content-type":"application/json",
+          "auth_token":token
+        }
+      });
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+    
+  }
+  getUser=async(token)=> {
+
+
+    try {
+      const response = await fetch(`${url.BASE_URL}/api/user`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "auth_token":token
+          }
+      });
+      const result = await response.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+        result
+      };
+      
+      
+      
     } catch (err) {
       console.log(err);
     }
+  
   }
-  getSingleUser(id) {
-    // get single User by id
+  getSingleUser=async(token,id)=> {
+    
 
-    // getting array of objects
-    const UserArr = this.getUsers();
+    try {
+      const response = await fetch(`${url.BASE_URL}/api/user/${id}`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "auth_token":token
+          }
+      });
+      const result = await response.json();
 
-    // search for specific one having userId=userId and userId=id
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
 
-    return UserArr.filter((curr) => {
-      return curr.userId === id;
-    })[0];
-  }
-  getSingleUserByEmail(email) {
-    // get single User by id
-
-    // getting array of objects
-    const UserArr = this.getUsers();
-    // console.log("Get user___");
-    // console.log(UserArr);
-    // search for specific one having userId=userId and userId=id
-
-    return UserArr.filter((curr) => {
-      // console.log(curr);
-      return curr.email == email;
-    })[0];
-  }
-  #download(arr) {
-    const fileName = "user_Info.json";
-    let jsonText = JSON.stringify(arr);
-    let ele = document.createElement("a");
-    ele.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(jsonText)
-    );
-
-    ele.setAttribute("download", fileName);
-    ele.style.display = "none";
-    document.body.appendChild(ele);
-    console.log(ele);
-    ele.click();
-    document.body.removeChild(ele);
+      return{
+        status:response.status,
+        message:result.message,
+        result
+      };
+      
+      
+      
+    } catch (err) {
+      console.log(err);
+    }
+  
+  
   }
 }

@@ -1,118 +1,197 @@
-import educationData from "../Api/Education.json" assert { type: "json" };
+import url from "../../utils/config.json" assert { type: "json" };
 
 export class Education {
   // initialize values in constructor
   constructor() {
-    this.educationId = 0;
-    this.userId = 0;
-    this.instituteName = "";
+    this.education_id = 0;
+    this.user_id = 0;
+    this.institute_name = "";
     this.degree = "";
     this.location = "";
-    this.startDate = "";
-    this.endDate = "";
-    this.desc = "";
+    this.start_date = "";
+    this.end_date = "";
+    this.description = "";
   }
   // Perform CRUD
 
-  addEducation(education) {
+  addEducation=async(token,education) =>{
     // read JSON file and append new Education
-
-    // get data from .json
-    const EducationArr = this.getEducations();
-    const size = EducationArr.length;
-    // add id
-    education.educationId = size + 1;
-    // push to the fetched array
-    EducationArr.push(education);
-    // download the file
-    this.#download(EducationArr);
-  }
-  updateEducation(userid, id, upEducation) {
-    // search particular Education id then update data then save json
-
-    // get data from .json
-    const EducationArr = this.getEducations();
-
-    // search for specific index, one having userId=userid and educationId=id
-    console.log(EducationArr);
-    let EducationIn = -1;
-
-    for (let i = 0; i < EducationArr.length; i++) {
-      if (
-        EducationArr[i].educationId === id &&
-        EducationArr[i].userId === userid
-      ) {
-        EducationIn = i;
-        break;
-      }
-    }
-    console.log("index:" + EducationIn);
-
-    // update object
-    const updatedVersion = {
-      educationId: id,
-      userId: userid,
-      instituteName: upEducation.instituteName,
-      degree: upEducation.degree,
-      location: upEducation.locaton,
-      startDate: upEducation.startDate,
-      endDate: upEducation.endDate,
-      desc: upEducation.dec,
-    };
-    EducationArr[EducationIn] = updatedVersion;
-    console.log(EducationArr);
-    // download the file
-    this.#download(EducationArr);
-  }
-  deleteEducation(id) {
-    // delete Education with particular id and then save
-    // getting array of objects
-    const EducationArr = this.getEducations();
-
-    // filter array where educationId!=id
-
-    const filteredResult = EducationArr.filter((curr) => {
-      return curr.educationId != id;
-    });
-
-    // download the file
-    this.#download(filteredResult);
-  }
-  getEducations() {
-    // get all Education
     try {
-      const data = educationData;
-      return data;
+      const res = await fetch(`${url.BASE_URL}/api/education`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "auth_token":token
+        },
+        body: JSON.stringify(education),
+      });
+
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+  }
+  updateEducation=async(token,EducationId, upEducation) =>{
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/education/${EducationId}`, {
+        method: "PUT",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "auth_token":token
+        },
+        body: JSON.stringify(upEducation),
+      });
+
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+   
+  }
+  deleteEducation=async(token,id)=> {
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/education/${id}`, {
+        method: "DELETE", 
+        headers: {
+          "content-type":"application/json",
+          "auth_token":token
+        }
+      });
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+    
+  }
+  getEducation=async(token)=> {
+
+
+    try {
+      const response = await fetch(`${url.BASE_URL}/api/education`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "auth_token":token
+          }
+      });
+      const result = await response.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+        result
+      };
+      
+      
+      
     } catch (err) {
       console.log(err);
     }
+  
   }
-  getSingleEducation(userid, id) {
-    // get single Education by id
+  getSingleEducation=async(token,id)=> {
+    
 
-    // getting array of objects
-    const EducationArr = this.getEducations();
+    try {
+      const response = await fetch(`${url.BASE_URL}/api/education/${id}`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "auth_token":token
+          }
+      });
+      const result = await response.json();
 
-    // search for specific one having userId=userid and educationId=id
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
 
-    return EducationArr.filter((curr) => {
-      return curr.educationId === id && curr.userId === userid;
-    })[0];
-  }
-  #download(arr) {
-    const fileName = "Education.json";
-    let jsonText = JSON.stringify(arr);
-    let ele = document.createElement("a");
-    ele.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(jsonText)
-    );
-
-    ele.setAttribute("download", fileName);
-    ele.style.display = "none";
-    document.body.appendChild(ele);
-    console.log(ele);
-    ele.click();
-    document.body.removeChild(ele);
+      return{
+        status:response.status,
+        message:result.message,
+        result
+      };
+      
+      
+      
+    } catch (err) {
+      console.log(err);
+    }
+  
+  
   }
 }

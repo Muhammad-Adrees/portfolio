@@ -1,24 +1,26 @@
 import url from "../../utils/config.json" assert { type: "json" };
 
-export class About {
+export class projectTag {
   // initialize values in constructor
   constructor() {
-    this.about_id = 0;
+    this.project_tag_id = 0;
     this.user_id = 0;
-    this.description = "";
+    this.project_id = "";
+    this.tag_name = "";
   }
   // Perform CRUD
 
-  addAbout=async(token,about) =>{
-    // read JSON file and append new About
+  addProjectTag=async(token,project_id,Projecttag) =>{
+    // read JSON file and append new ProjectTag
     try {
-      const res = await fetch(`${url.BASE_URL}/api/about`, {
+      const res = await fetch(`${url.BASE_URL}/api/projecttag`, {
         method: "POST",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "auth_token":token,
+          "project_id":project_id
         },
-        body: JSON.stringify(about),
+        body: JSON.stringify(Projecttag),
       });
 
 
@@ -45,15 +47,15 @@ export class About {
       };
     }
   }
-  updateAbout=async(token,aboutId, upAbout) =>{
+  updateProjectTag=async(token,ProjectTagId, upProjectTag) =>{
     try {
-      const res = await fetch(`${url.BASE_URL}/api/about/${aboutId}`, {
+      const res = await fetch(`${url.BASE_URL}/api/projecttag/${ProjectTagId}`, {
         method: "PUT",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
           "auth_token":token
         },
-        body: JSON.stringify(upAbout),
+        body: JSON.stringify(upProjectTag),
       });
 
 
@@ -81,13 +83,14 @@ export class About {
     }
    
   }
-  deleteAbout=async(token,id)=> {
+  deleteAllProjectTag=async(token,project_id)=> {
     try {
-      const res = await fetch(`${url.BASE_URL}/api/about/${id}`, {
-        method: "DELETE",
+      const res = await fetch(`${url.BASE_URL}/api/projecttag`, {
+        method: "DELETE", 
         headers: {
           "content-type":"application/json",
-          "auth_token":token
+          "auth_token":token,
+          "project_id":project_id
         }
       });
       const result = await res.json();
@@ -114,11 +117,11 @@ export class About {
     }
     
   }
-  getAbout=async(token)=> {
+  getProjectTag=async(token)=> {
 
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/about`,{
+      const response = await fetch(`${url.BASE_URL}/api/projecttag`,{
           method:"GET",
           headers:{
               "content-type":"application/json",
@@ -151,11 +154,11 @@ export class About {
     }
   
   }
-  getSingleAbout=async(token,id)=> {
+  getSingleProjectTag=async(token,id)=> {
     
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/about/${id}`,{
+      const response = await fetch(`${url.BASE_URL}/api/projecttag/${id}`,{
           method:"GET",
           headers:{
               "content-type":"application/json",

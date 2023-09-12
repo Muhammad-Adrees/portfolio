@@ -6,6 +6,7 @@ import { Project } from "./classes/Project.js";
 import { Skill } from "./classes/Skill.js";
 import { User_Info } from "./classes/User_Info.js";
 import { User_registration } from "./classes/User_registration.js";
+import { Auth } from "./classes/Auth.js";
 
 export {
   About,
@@ -16,4 +17,5 @@ export {
   Skill,
   User_Info,
   User_registration,
+  Auth
 };

@@ -1,11 +1,12 @@
-import contactData from "../Api/Contact.json" assert { type: "json" };
+import url from "../../utils/config.json" assert { type: "json" };
+
 
 export class Contact {
   // initialize values in constructor
 
   constructor() {
-    this.contactId = 0;
-    this.userId = 0;
+    this.contact_id = 0;
+    this.user_id = 0;
     this.email = "";
     this.phone = "";
     this.linkedin = "";
@@ -15,103 +16,185 @@ export class Contact {
   }
   // Perform CRUD
 
-  addContact(contact) {
+  addContact=async(token,contact) =>{
     // read JSON file and append new Contact
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/contact`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "auth_token":token
+        },
+        body: JSON.stringify(contact),
+      });
 
-    // get data from .json
-    const ContactArr = this.getContacts();
-    const size = ContactArr.length;
-    // add id
-    contact.contactId = size + 1;
-    // push to the fetched array
-    ContactArr.push(contact);
-    // download the file
-    this.#download(ContactArr);
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+  }
+  updateContact=async(token,ContactId, upContact) =>{
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/contact/${ContactId}`, {
+        method: "PUT",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "auth_token":token
+        },
+        body: JSON.stringify(upContact),
+      });
+
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+   
+  }
+  deleteContact=async(token,id)=> {
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/contact/${id}`, {
+        method: "DELETE", 
+        headers: {
+          "content-type":"application/json",
+          "auth_token":token
+        }
+      });
+      const result = await res.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
     
   }
-  updateContact(userid, upContact) {
-    // search particular Contact id then update data then save json
+  getContact=async(token)=> {
 
-    // get data from .json
-    const ContactArr = this.getContacts();
 
-    // search for specific index, one having userId=userid and contactId=id
-    console.log(ContactArr);
-    let ContactIn = -1;
-
-    for (let i = 0; i < ContactArr.length; i++) {
-      if ( ContactArr[i].userId === userid) {
-        ContactIn = i;
-        break;
-      }
-    }
-    console.log("index:" + ContactIn);
-
-    // update object
-    const updatedVersion = {
-      contactId:ContactArr[ContactIn].contactId,
-      userId: userid,
-      email: upContact.email,
-      phone: upContact.phone,
-      linkedin: upContact.linkedin,
-      instagram: upContact.instagram,
-      twitter: upContact.twitter,
-      github: upContact.github,
-    };
-    ContactArr[ContactIn] = updatedVersion;
-    console.log(ContactArr);
-    // download the file
-    this.#download(ContactArr);
-  }
-  deleteContact(id) {
-    // delete Contact with particular id and then save
-    // getting array of objects
-    const ContactArr = this.getContacts();
-
-    // filter array where contactId!=id
-
-    const filteredResult = ContactArr.filter((curr) => {
-      return curr.contactId != id;
-    });
-
-    // download the file
-    this.#download(filteredResult);
-  }
-  getContacts() {
-    // get all Contact
     try {
-      const data = contactData;
-      return data;
+      const response = await fetch(`${url.BASE_URL}/api/contact`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "auth_token":token
+          }
+      });
+      const result = await response.json();
+
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
+
+      return{
+        status:response.status,
+        message:result.message,
+        result
+      };
+      
+      
+      
     } catch (err) {
       console.log(err);
     }
+  
   }
-  getSingleContact(userid, id) {
-    // get single Contact by id
+  getSingleContact=async(token,id)=> {
+    
 
-    // getting array of objects
-    const ContactArr = this.getContacts();
+    try {
+      const response = await fetch(`${url.BASE_URL}/api/contact/${id}`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "auth_token":token
+          }
+      });
+      const result = await response.json();
 
-    // search for specific one having userId=userid and contactId=id
+      if([400,404,500,401].includes(response.status))
+      {
+          // not found
+          return {
+            status:response.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
 
-    return ContactArr.filter((curr) => {
-      return curr.contactId === id && curr.userId === userid;
-    })[0];
+      return{
+        status:response.status,
+        message:result.message,
+        result
+      };
+      
+      
+      
+    } catch (err) {
+      console.log(err);
+    }
+  
+  
   }
-  #download(arr) {
-    const fileName = "Contact.json";
-    let jsonText = JSON.stringify(arr);
-    let ele = document.createElement("a");
-    ele.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(jsonText)
-    );
 
-    ele.setAttribute("download", fileName);
-    ele.style.display = "none";
-    document.body.appendChild(ele);
-    console.log(ele);
-    ele.click();
-    document.body.removeChild(ele);
-  }
 }
