@@ -15,8 +15,8 @@ export class About {
       const res = await fetch(`${url.BASE_URL}/api/about`, {
         method: "POST",
         headers: {
-          "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "Content-Type": "application/x-www-form-urlencoded",
+          "authorization":`Bearer ${token}`
         },
         body: JSON.stringify(about),
       });
@@ -24,18 +24,18 @@ export class About {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -50,8 +50,8 @@ export class About {
       const res = await fetch(`${url.BASE_URL}/api/about/${aboutId}`, {
         method: "PUT",
         headers: {
-          "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "Content-Type": "application/x-www-form-urlencoded",
+          "authorization":`Bearer ${token}`
         },
         body: JSON.stringify(upAbout),
       });
@@ -59,18 +59,18 @@ export class About {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -86,24 +86,24 @@ export class About {
       const res = await fetch(`${url.BASE_URL}/api/about/${id}`, {
         method: "DELETE",
         headers: {
-          "content-type":"application/json",
-          "auth_token":token
+          "Content-Type":"application/json",
+          "authorization":`Bearer ${token}`
         }
       });
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -114,35 +114,31 @@ export class About {
     }
     
   }
-  getAbout=async(token)=> {
+  getAbouts=async(token)=> {
 
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/about`,{
+      const res = await fetch(`${url.BASE_URL}/api/about`,{
           method:"GET",
           headers:{
-              "content-type":"application/json",
-              "auth_token":token
+              "Content-Type":"application/json",
+              "authorization":`Bearer ${token}`
           }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       
@@ -155,31 +151,27 @@ export class About {
     
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/about/${id}`,{
+      const res = await fetch(`${url.BASE_URL}/api/about/${id}`,{
           method:"GET",
           headers:{
-              "content-type":"application/json",
-              "auth_token":token
+              "Content-Type":"application/json",
+              "authorization":`Bearer ${token}`
           }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       

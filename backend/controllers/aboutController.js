@@ -134,7 +134,10 @@ const deleteSingleAbout=({ res,
 
 const notFound=(res)=>{
     res.writeHead(404, { "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",'Content-Type': 'text/html' });
+    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",
+    "Access-Control-Allow-Credentials": true,
+    "Access-Control-Allow-Headers": "*",
+    'Content-Type': 'text/html' });
     res.write(JSON.stringify({
         message:"404 Not found"
     }))
@@ -142,7 +145,10 @@ const notFound=(res)=>{
 }
 const successRes=(res)=>{
     res.writeHead(200, { "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",'Content-Type': 'text/html' });
+    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",
+    "Access-Control-Allow-Credentials": true,
+    "Access-Control-Allow-Headers": "*",
+    'Content-Type': 'text/html' });
     res.write(JSON.stringify({
         message:"Successfull"
     }))
@@ -151,15 +157,21 @@ const successRes=(res)=>{
 
 const serverErr=(res,err)=>{
     res.writeHead(500, { "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",'Content-Type': 'text/html' });
+    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",
+    "Access-Control-Allow-Credentials": true,
+    "Access-Control-Allow-Headers": "*",
+    'Content-Type': 'text/html' });
     res.write(JSON.stringify({
         message:err
     }))
     return res.end()
 }
 const successResult=(res,result)=>{
-    res.writeHead(200,{"Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE","Content-Type":"application/json"});
+    res.writeHead(200,{ "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",
+    "Access-Control-Allow-Credentials": true,
+    "Access-Control-Allow-Headers": "*",
+    'Content-Type': 'text/html' });
     res.write(JSON.stringify(result))
     res.end();
 

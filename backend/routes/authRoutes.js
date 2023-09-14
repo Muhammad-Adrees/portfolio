@@ -8,7 +8,7 @@ const bodyParser = require("../utils/bodyParser.js")
 const validator = require("validator")
 
 
-module.exports = async ({ req, res, completeUrl, DBcon }, headers) => {
+module.exports = async ({ req, res, completeUrl, DBcon }) => {
 
      let body = await bodyParser(req);
      if (req.method === 'POST' && completeUrl == 'user/auth/register/') {
@@ -21,6 +21,7 @@ module.exports = async ({ req, res, completeUrl, DBcon }, headers) => {
           registerUser(res, body, DBcon)
      }
      else if (req.method === 'POST' && completeUrl == 'user/auth/login/') {
+          console.log(body)
           if (!IsvalidbodyLogin(body) || !validator.isEmail(body.email)) {
                return inValidStatus(res);
           }
@@ -39,7 +40,7 @@ const validateUser = (obj) => {
 }
 
 const notFoundStatus=(res)=>{
-    
+    console.log('not found routes')
      res.writeHead(404,{ "Access-Control-Allow-Origin": "*",
      "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",'Content-Type': 'text/html' });
      res.write(JSON.stringify({

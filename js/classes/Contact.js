@@ -23,7 +23,7 @@ export class Contact {
         method: "POST",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "authorization":`Bearer ${token}`
         },
         body: JSON.stringify(contact),
       });
@@ -31,18 +31,18 @@ export class Contact {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -58,7 +58,7 @@ export class Contact {
         method: "PUT",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "authorization":`Bearer ${token}`
         },
         body: JSON.stringify(upContact),
       });
@@ -66,18 +66,18 @@ export class Contact {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -94,23 +94,23 @@ export class Contact {
         method: "DELETE", 
         headers: {
           "content-type":"application/json",
-          "auth_token":token
+          "authorization":`Bearer ${token}`
         }
       });
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -121,35 +121,31 @@ export class Contact {
     }
     
   }
-  getContact=async(token)=> {
+  getContacts=async(token)=> {
 
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/contact`,{
+      const res = await fetch(`${url.BASE_URL}/api/contact`,{
           method:"GET",
           headers:{
               "content-type":"application/json",
-              "auth_token":token
+              "authorization":`Bearer ${token}`
           }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       
@@ -162,31 +158,27 @@ export class Contact {
     
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/contact/${id}`,{
+      const res = await fetch(`${url.BASE_URL}/api/contact/${id}`,{
           method:"GET",
           headers:{
               "content-type":"application/json",
-              "auth_token":token
+              "authorization":`Bearer ${token}`
           }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       

@@ -17,9 +17,9 @@ module.exports=(connect)=>{
     const about_query=`
     CREATE TABLE IF NOT EXISTS about(
         about_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        description VARCHAR(255),
+        description VARCHAR(2000),
         user_id INT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES user(user_id)
+        FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
     
     `
@@ -44,7 +44,7 @@ module.exports=(connect)=>{
         start_date DATE,
         end_date DATE,
         years INT,
-        description VARCHAR(255),
+        description VARCHAR(2000),
         user_id INT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
@@ -58,7 +58,7 @@ module.exports=(connect)=>{
         location VARCHAR(255),
         start_date DATE,
         end_date DATE,
-        description VARCHAR(255),
+        description VARCHAR(2000),
         user_id INT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE
     );
@@ -80,12 +80,12 @@ module.exports=(connect)=>{
     const project_query=`
     CREATE TABLE IF NOT EXISTS project(
         project_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        file LONGBLOB,
+        file LONGTEXT,
         exe VARCHAR(255),
         title VARCHAR(255),
         start_date DATE,
         end_date DATE,
-        description VARCHAR(255),
+        description VARCHAR(2000),
         source_link VARCHAR(255),
         live_link VARCHAR(255),
         user_id INT NOT NULL,

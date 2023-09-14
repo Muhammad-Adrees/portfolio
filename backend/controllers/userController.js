@@ -40,6 +40,8 @@ const getAllUsers=(res,DBcon)=>{
 }
 const getSingleUser=(res,id,DBcon)=>{
 
+
+
     const getSingleQuery=`
         select * from user where user_id=${parseInt(id)}
     `

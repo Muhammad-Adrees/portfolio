@@ -21,7 +21,7 @@ export class Experience {
         method: "POST",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "authorization":`Bearer ${token}`
         },
         body: JSON.stringify(experience),
       });
@@ -29,18 +29,18 @@ export class Experience {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -56,7 +56,7 @@ export class Experience {
         method: "PUT",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "authorization":`Bearer ${token}`
         },
         body: JSON.stringify(upExperience),
       });
@@ -64,18 +64,18 @@ export class Experience {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -92,23 +92,23 @@ export class Experience {
         method: "DELETE", 
         headers: {
           "content-type":"application/json",
-          "auth_token":token
+          "authorization":`Bearer ${token}`
         }
       });
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -119,35 +119,31 @@ export class Experience {
     }
     
   }
-  getExperience=async(token)=> {
+  getExperiences=async(token)=> {
 
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/experience`,{
+      const res = await fetch(`${url.BASE_URL}/api/experience`,{
           method:"GET",
           headers:{
               "content-type":"application/json",
-              "auth_token":token
+              "authorization":`Bearer ${token}`
           }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       
@@ -160,31 +156,27 @@ export class Experience {
     
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/experience/${id}`,{
+      const res = await fetch(`${url.BASE_URL}/api/experience/${id}`,{
           method:"GET",
           headers:{
               "content-type":"application/json",
-              "auth_token":token
+              "authorization":`Bearer ${token}`
           }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       

@@ -1,20 +1,21 @@
 import dataReceieved from "../fetchData.js";
-import {
-  Project,
-  User_registration
-} from "../links.js";
-let projectsArr = dataReceieved.projectArr;
+import { User_registration } from "./classes/User_registration.js";
+import { Admin_project } from "./classes/Admin_project.js";
+  
+let projectsArr = dataReceieved.projectsArr;
 let currArr = [];
-let activeUsersArr = dataReceieved.User_registration;
+let activeUsersArr = dataReceieved.usersArr;
 
 let userId = 0;
+let auth_token="";
 let userRole = "";
 let model_content_handle = document.getElementById("model_content_handle");
 let myModal = document.getElementById("myModal");
 
 window.onload = function () {
   document.getElementById("loading").style.display="none"
-  userId = parseInt(localStorage.getItem("userId"));
+
+  auth_token = parseInt(localStorage.getItem("auth_token"));
   userRole = localStorage.getItem("userRole");
   if (!userRole) {
     location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
@@ -23,16 +24,16 @@ window.onload = function () {
       location.href = "http://127.0.0.1:5501/index.html";
     }
 
-  userSpecificData();
+  // userSpecificData();
   modifyDOM();
 };
 
-function userSpecificData() {
-  // specific user data
-  currArr = dataReceieved.User_registration.filter((item) => {
-    return item.userId === userId;
-  });
-}
+// function userSpecificData() {
+//   // specific user data
+//   currArr = dataReceieved.User_registration.filter((item) => {
+//     return item.userId === userId;
+//   });
+// }
 function modifyDOM() {
   navHandle();
   userHandle(activeUsersArr);
@@ -41,7 +42,7 @@ function modifyDOM() {
 
 function navHandle() {
   let user_name = document.getElementById("user_name");
-  const name = currArr[0].lastName;
+  const name = currArr[0].last_name;
   let str = `<a href="/src/pages/Admin/Admin.html" class="logo_link">${name}</a>`;
   user_name.innerHTML = str;
 }
@@ -55,12 +56,12 @@ function userHandle(users) {
       user_str +
       `
     <div class="user_fetched_item">
-    <input style="display: none;" value="${users[i].userId}">
+    <input style="display: none;" value="${users[i].user_id}">
       <div class="user_item_info">
-          <span class="item_info">${users[i].firstName}</span>
-          <span class="item_info">${users[i].lastName}</span>
+          <span class="item_info">${users[i].first_name}</span>
+          <span class="item_info">${users[i].last_name}</span>
           <span class="item_info">${users[i].email}</span>
-          <span class="item_info">${users[i].userRole}</span>
+          <span class="item_info">${users[i].user_role}</span>
       </div>
       <div class="user_btn_container">
           <button class="btn_border user_delete">Delete User</button>

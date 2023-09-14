@@ -109,7 +109,10 @@ module.exports = async ({req,res,completeUrl,DBcon,verifiedUser}) => {
 
 const inValidStatus=(res)=>{
      res.writeHead(400,{ "Access-Control-Allow-Origin": "*",
-     "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",'Content-Type': 'text/html' });
+     "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",
+     "Access-Control-Allow-Credentials": true,
+     "Access-Control-Allow-Headers": "*",
+     'Content-Type': 'text/html' });
      res.write(JSON.stringify({
           message:"invalid request"
       }))
@@ -119,7 +122,10 @@ const inValidStatus=(res)=>{
  const notFoundStatus=(res)=>{
     
      res.writeHead(404,{ "Access-Control-Allow-Origin": "*",
-     "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",'Content-Type': 'text/html' });
+     "Access-Control-Allow-Methods": "POST,GET,PUT,DELETE",
+     "Access-Control-Allow-Credentials": true,
+     "Access-Control-Allow-Headers": "*",
+     'Content-Type': 'text/html' });
      res.write(JSON.stringify({
           message:"404 not found"
       }))

@@ -7,11 +7,10 @@ const {
      deleteSingleUser
 
 } = require("../controllers/userController.js")
-
+const jwt=require("jsonwebtoken")
 const bodyParser = require("../utils/bodyParser.js")
 const validator = require("validator")
-module.exports = async ({ req, res, completeUrl, DBcon }) => {
-
+module.exports = async ({ req, res, completeUrl, DBcon,verifiedUser }) => {
      
      const id = completeUrl.split('/')[2];
      // check for valid id
@@ -25,10 +24,9 @@ module.exports = async ({ req, res, completeUrl, DBcon }) => {
      }
      else if (req.method === 'GET' && completeUrl != 'api/user/') {
           // get single request with id
-
-          getSingleUser(res, id, DBcon)
+          getSingleUser(res,id, DBcon)
      }
-     else if (req.method === 'POST' && completeUrl == 'api/user/') {
+     else if (req.method === 'POST' && completeUrl == 'api/user/' ) {
           // add case
           const body = await bodyParser(req);
           // validate body and user
@@ -51,9 +49,8 @@ module.exports = async ({ req, res, completeUrl, DBcon }) => {
 
           deleteAllUsers(res, DBcon)
      }
-     else if (req.method === 'DELETE' && completeUrl != 'api/user/') {
+     else if (req.method === 'DELETE' && completeUrl != 'api/user/' ) {
           // delete single case
-
           deleteSingleUser(res, id, DBcon)
      }
      else {
@@ -108,3 +105,5 @@ const Isvalidbody = (body) => {
      }
      return true;
 }
+
+

@@ -13,6 +13,9 @@ const skillRoutes=require("./routes/skillRoutes.js");
 const projectRoutes=require("./routes/projectRoutes.js");
 const projectTagRoutes=require("./routes/projectTagRoutes.js");
 const projectLanguageRoutes=require("./routes/projectLanguageRoutes.js");
+const adminprojectRoutes=require("./routes/adminprojectRoutes.js");
+const currentuserRoutes=require("./routes/currentUserRoutes.js");
+
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 
@@ -33,9 +36,18 @@ const server=http.createServer(async(req,res)=>{
     let verifiedUser ="";
    
     // if url length is more then 3 then invalid
-    if(splitUrl.length>3)
+    if(req.method==='OPTIONS'){
+        res.writeHead(204,"ok", { "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST,GET,PUT,DELETE,OPTION",
+        "Access-Control-Allow-Credentials": true,
+        "Access-Control-Allow-Headers": "*",
+        'Content-Type': 'text/html' });
+        res.end("ok");
+        return;
+    }
+    if(splitUrl.length>3 )
     {
-        notFoundStatus(res)
+        notFoundStatus(res);
     }
 
     const baseUrl=splitUrl[0]+'/'+splitUrl[1];
@@ -50,9 +62,32 @@ const server=http.createServer(async(req,res)=>{
     if(["api/about","api/userinfo",
     "api/contact","api/experience",
     "api/education","api/skill","api/project",
-    "api/projecttag","api/projectlanguage"].includes(baseUrl))
+    "api/projecttag","api/projectlanguage","api/user","api/adminproject","api/currentuser"].includes(baseUrl))
     {
-        verifiedUser= await verifyToken(req,res)
+        verifiedUser= await verifyToken(req,res);
+        if(baseUrl!="api/currentuser")
+        {
+            // verify admin;
+            if(["api/user","api/adminproject"].includes(baseUrl))
+            {
+                // Is requested one is admin
+    
+                if(!verifyAdmin(verifiedUser))
+                {
+                    return unAuthorizeStatus(res)
+                }
+            } // verify user
+            else
+            {
+                // Is requested one is user
+    
+                if(!verifyUser(verifiedUser))
+                {
+                    return unAuthorizeStatus(res)
+                } 
+            }
+        }
+
     }
 
     const sendObj={
@@ -67,6 +102,7 @@ const server=http.createServer(async(req,res)=>{
     }else if(baseUrl==='user/auth')
     {
         // auth api
+        console.log("user/auth")
         authRoutes(sendObj)
     }
     else if(baseUrl==='api/about')
@@ -113,7 +149,13 @@ const server=http.createServer(async(req,res)=>{
         // project languages api
         
         projectLanguageRoutes(sendObj)
-    }else
+    }else if(baseUrl==='api/adminproject'){
+        adminprojectRoutes(sendObj)
+    }
+    else if(baseUrl==='api/currentuser'){
+        currentuserRoutes(sendObj)
+    }
+    else
     {
         notFoundStatus(res)
     }
@@ -122,35 +164,58 @@ const server=http.createServer(async(req,res)=>{
 
 const unAuthorizeStatus = (res) => {
     res.writeHead(401, { "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",'Content-Type': 'text/html' });
+    "Access-Control-Allow-Methods": "POST,GET,PUT,DELETE",
+    "Access-Control-Allow-Credentials": true,
+    "Access-Control-Allow-Headers": "*",
+    'Content-Type': 'text/html' });
     res.write(JSON.stringify({
         message:"unAuthorize!!!!"
     }))
         return res.end()
 }
 const notFoundStatus = (res) => {
+    console.log("not found server")
 
     res.writeHead(404,  { "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",'Content-Type': 'text/html' });
+    "Access-Control-Allow-Methods": "POST,GET,PUT,DELETE,OPTION",
+    "Access-Control-Allow-Credentials": true,
+    "Access-Control-Allow-Headers": "*",
+    'Content-Type': 'text/html' });
     res.write(JSON.stringify({
         message:"404 Not found"
     }))
         return res.end()
 }
 
+
 const verifyToken=async(req,res)=>{
-    const auth_token = req.headers.auth_token;
-    if (!auth_token) {
-         return unAuthorizeStatus(res);
+    
+    let auth_token;
+    console.log("token:"+req.headers.authorization)
+    if([undefined,null].includes(req.headers.authorization))
+    {
+    //    console.log("undefine:"+req.url)
+        return unAuthorizeStatus(res);
     }
-    else {
-        let verifiedUser =await jwt.verify(auth_token, process.env.SECRET_KEY);
-         if (!verifiedUser) {
-              return unAuthorizeStatus(res);
-         }
-         else
-            return verifiedUser;
+    else
+    {
+        // console.log("have!!")
+        auth_token = req.headers.authorization.split(' ')[1];
+        console.log(auth_token)
     }
+    let verifiedUser =await jwt.verify(auth_token, process.env.SECRET_KEY);
+    if (!verifiedUser) {
+        return unAuthorizeStatus(res);
+    }
+    return verifiedUser;
+}
+
+
+const verifyAdmin=(vUser)=>{
+    return vUser.user_role==="admin";
+}
+const verifyUser=(vUser)=>{
+    return vUser.user_role==="user";
 }
 
 server.listen(PORT,()=>{

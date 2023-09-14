@@ -1,47 +1,54 @@
-import dataReceieved from "./fetchData.js";
+import fetchDate from "./fetchData.js";
 
 // JS for index.html
 
 // onLoad I want to fecth data and display on index.html page
-let user_infoArr = [];
-let aboutArr = [];
-let contactArr = [];
-let educationArr = [];
-let experienceArr = [];
-let projectsArr = [];
-let skillsArr = [];
-let usersArr = [];
+let user_infoArr, aboutArr,contactArr,
+educationArr,experienceArr,projectsArr,
+skillsArr,project_languageArr,project_tagArr,current_user;
+const initialize=()=>{
+  user_infoArr = fetchDate.dataReceieved.user_infoArr;
+  aboutArr = fetchDate.dataReceieved.aboutArr;
+  contactArr = fetchDate.dataReceieved.contactArr;
+  educationArr = fetchDate.dataReceieved.educationArr;
+  experienceArr = fetchDate.dataReceieved.experienceArr;
+  projectsArr = fetchDate.dataReceieved.projectsArr;
+  skillsArr = fetchDate.dataReceieved.skillsArr;
+   project_languageArr=fetchDate.dataReceieved.project_languageArr;
+  project_tagArr=fetchDate.dataReceieved.project_tagArr;
+  current_user=fetchDate.dataReceieved.current_user;
+}
 
-let userId = 0;
+console.log(current_user)
+
+
 let userRole = "";
 let model_content_handle = document.getElementById("model_content_handle");
 let myModal = document.getElementById("myModal");
 
-userId = parseInt(localStorage.getItem("userId"));
+let auth_token = localStorage.getItem("auth_token");
 userRole = localStorage.getItem("userRole");
-console.log(userId);
+console.log(auth_token);
 console.log(userRole);
 
 if (userRole === "admin" || !userRole) {
   localStorage.removeItem("userId");
-  localStorage.removeItem("userRole");
+  localStorage.removeItem("auth_token");
 
   location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
 }
 
 
-window.onload = function () {
+window.onload = async function () {
   // I have to get id from local storage after login and then find data from dataReceived based on id
   // and then passed to each function
   document.getElementById("loading").style.display="none"
   // userId = ;
  
-  userSpecificData();
+  await fetchDate.run();
+  initialize()
   modifyDOM();
 
-  // if the user is not loggedin then show 2 buttons on header login,signup
-
-  // change header based on user role
 };
 
 function modifyDOM() {
@@ -55,59 +62,43 @@ function modifyDOM() {
   footerHandle();
 }
 
-function userSpecificData() {
-  // specific user data
-  aboutArr = dataReceieved.aboutData.filter((item) => {
-    return item.userId === userId;
-  });
-
-  user_infoArr = dataReceieved.user_infoArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  contactArr = dataReceieved.contactArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  educationArr = dataReceieved.educationArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  experienceArr = dataReceieved.experienceArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  skillsArr = dataReceieved.skillArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  projectsArr = dataReceieved.projectArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  usersArr = dataReceieved.User_registration.filter((item) => {
-    return item.userId === userId;
+const getProjectTag=(id)=>{
+  id=parseInt(id)
+  return project_tagArr.filter((item) => {
+          return item.project_id === id;
+        });
+}
+const getProjectLanguages=(id)=>{
+  id=parseInt(id)
+  return project_languageArr.filter((item) => {
+    return item.project_id === id;
   });
 }
-
 function navHandle() {
   let user_name = document.getElementById("user_name");
-  const name = usersArr[0].lastName;
+  const name = current_user[0].last_name;
   let str = `<a href="/index.html" class="logo_link">${name}</a>`;
   user_name.innerHTML = str;
 }
 
 function headerHandle() {
   // header title part------------
-
   let header_title = document.getElementById("header_title");
-  const name = usersArr[0].firstName + " " + usersArr[0].lastName;
-  const designation = user_infoArr[0].designation;
-  header_title.innerHTML = `
-  
-  Hi, My name is <span class="name" id="user_full_name">${name}</span><br>I am a ${designation}
-  
-  `;
+  if(user_infoArr.length>0)
+    {
+      const name = current_user[0].first_name + " " + current_user[0].last_name;
+      const designation = user_infoArr[0].designation;
+      header_title.innerHTML = `
+      
+      Hi, My name is <span class="name" id="user_full_name">${name}</span><br>I am a ${designation}
+      
+      `;
+    }
+    else
+    {
+      const h_str=`<p class="no_result_text">Add user info</p>`;
+      header_title.innerHTML=h_str;
+    }
 
   // socials part ---------------
   //  Each user have one social instance in .json
@@ -115,66 +106,91 @@ function headerHandle() {
   const header_socials = document.getElementById("header_socials");
 
   // if social hase no data then it will not show
-
-  const Links = [
-    contactArr[0].linkedin,
-    contactArr[0].twitter,
-    contactArr[0].github,
-    contactArr[0].instagram,
-  ];
-  console.log(Links);
-  const social_names = ["linkedin", "twitter", "github", "instagram"];
-  let str = "";
-  for (let i = 0; i < Links.length; i++) {
-    if (Links[i].length != 0) {
-      str =
-        str +
-        `
-        <a href="${i}"><i class="fa-brands fa-${social_names[i]}"></i></a>
-        `;
+    if(contactArr.length>0)
+    {
+      const Links = [
+        contactArr[0].linkedin,
+        contactArr[0].twitter,
+        contactArr[0].github,
+        contactArr[0].instagram,
+      ];
+      const social_names = ["linkedin", "twitter", "github", "instagram"];
+      let str = "";
+      for (let i = 0; i < Links.length; i++) {
+        if (Links[i].length != 0) {
+          str =
+            str +
+            `
+            <a href="${Links[i]}"><i class="fa-brands fa-${social_names[i]}"></i></a>
+            `;
+        }
+      }
+      header_socials.innerHTML = str;
     }
-  }
-  console.log(str);
-  header_socials.innerHTML = str;
 
   // change counters----------------
-
-  let projects_counter = document.getElementById("projects_counter");
-  let companies_counter = document.getElementById("companies_counter");
-  let experience_counter = document.getElementById("experience_counter");
-
-  projects_counter.innerText = projectsArr.length + "+";
-  companies_counter.innerText = experienceArr.length + "+";
-  let years = 0;
-  for (let i = 0; i < experienceArr.length; i++) {
-    years = years + experienceArr[i].years;
-  }
-  experience_counter.innerText = years + "+";
+    if(projectsArr.length>0 && experienceArr.length>0)
+    {
+      let projects_counter = document.getElementById("projects_counter");
+      let companies_counter = document.getElementById("companies_counter");
+      let experience_counter = document.getElementById("experience_counter");
+    
+      projects_counter.innerText = projectsArr.length + "+";
+      companies_counter.innerText = experienceArr.length + "+";
+      let years = 0;
+      for (let i = 0; i < experienceArr.length; i++) {
+        years = years + experienceArr[i].years;
+      }
+      experience_counter.innerText = years + "+";
+        
+    }
 }
 function aboutHandle() {
   // about ---------------
-
   let about_designation = document.getElementById("about_designation");
   let about_desc = document.getElementById("about_desc");
 
-  about_desc.innerText = aboutArr[0].desc;
-  about_designation.innerText =
-    "Passionate" + " " + user_infoArr[0].designation;
+  const ab_str=`<p class="no_result_text white_text">No about found</p>`
+  const e_str=`<p class="no_result_text white_text">No education found</p>`
+  if(aboutArr.length>0)
+  {
+    about_desc.innerText = aboutArr[0].description;
+  }
+  else{
+    about_desc.innerHTML = ab_str;
+  }
+  if(user_infoArr.length>0)
+  {
+
+    about_designation.innerText =
+      "Passionate" + " " + user_infoArr[0].designation;
+  }
+  
+  
 
   // education ------------------
 
-  let about_education_list = document.getElementById("about_education_list");
-  let edu_str = "";
-  for (let i = 0; i < educationArr.length; i++) {
-    edu_str =
-      edu_str +
-      `
-    <li id="about_degree">${educationArr[i].degree} from <span class="about_uni" id="about_university">${educationArr[i].instituteName}</span> </li>
+  if(educationArr.length>0)
+  {
     
-    `;
+    let about_education_list = document.getElementById("about_education_list");
+    let edu_str = "";
+    for (let i = 0; i < educationArr.length; i++) {
+      edu_str =
+        edu_str +
+        `
+      <li id="about_degree">${educationArr[i].degree} from <span class="about_uni" id="about_university">${educationArr[i].institute_name}</span> </li>
+      
+      `;
+    }
+  
+    about_education_list.innerHTML = edu_str;
+  }
+  else
+  {
+    about_education_list.innerHTML = e_str;
   }
 
-  about_education_list.innerHTML = edu_str;
 }
 function dateSlice(dt) {
   const date = new Date(dt);
@@ -209,6 +225,7 @@ function projectHandle(projects) {
   let pro_str = "";
   if(projects.length===0)
   {
+    console.log("inside 0 projects")
     pro_str=
     `
     <p class="no_result_text">No project found</p>
@@ -218,7 +235,8 @@ function projectHandle(projects) {
   }
 
 
-  for (let i = 0; i < projects.length; i++) {
+  for (let i = 0; i < projects.length; i++) 
+  {
     let media_str = "";
     if (projects[i].exe === ".mp4") {
       media_str = `
@@ -237,25 +255,29 @@ function projectHandle(projects) {
     }
     // for languages and tags
     let lan_str='',tag_str=''
+    const p_id=projects[i].project_id;
+    console.log("p_id:"+p_id)
+    const project_specific_tag_Arr=getProjectTag(p_id);
 
-    if(projects[i].languages.length>0)
+    const project_specific_lan_Arr=getProjectLanguages(p_id);
+    if(project_specific_lan_Arr.length>0)
     {
-      for (let j = 0; j < projects[i].languages.length; j++) 
+      for (let j = 0; j < project_specific_lan_Arr.length; j++) 
       {
 
         lan_str=lan_str+`
         
         <div class="lan_item">
-            <span class="lan_item_lan">${projects[i].languages[j].lanName} <span  class="lan_item_per">${projects[i].languages[j].lanPer}%</span></span>
-            <progress class="lan_item_pro" value='${projects[i].languages[j].lanPer}' max="100"></progress>
+            <span class="lan_item_lan">${project_specific_lan_Arr[j].lan_name} <span  class="lan_item_per">${project_specific_lan_Arr[j].lan_percentage}%</span></span>
+            <progress class="lan_item_pro" value='${project_specific_lan_Arr[j].lan_percentage}' max="100"></progress>
         </div>
         
         `
       }
     }
-    if(projects[i].tags.length>0)
+    if(project_specific_tag_Arr.length>0)
     {
-      for (let k = 0; k < projects[i].tags.length; k++) 
+      for (let k = 0; k < project_specific_tag_Arr.length; k++) 
       {
         if(k==0)
         {
@@ -266,7 +288,7 @@ function projectHandle(projects) {
         }
         tag_str=tag_str+`
         
-        <span class="tag_item">${projects[i].tags[k].tagName}</span>
+        <span class="tag_item">${project_specific_tag_Arr[k].tag_name}</span>
         
         `
       }
@@ -281,17 +303,17 @@ function projectHandle(projects) {
       `
       <div class="project_item_container">
       <div class="project_info_container info_project" id="testId">
-          <input style="display: none;" value="${projects[i].projectId}">
+          <input style="display: none;" value="${projects[i].project_id}">
           <p class="project_title">${projects[i].title}</p>
-          <p class="project_detail">${DescSlice(projects[i].desc)}</p>
+          <p class="project_detail">${DescSlice(projects[i].description)}</p>
           ${lan_str}
           ${tag_str}
           <div class="project_btn_container">
               <a href="${
-                projects[i].sourceLink
+                projects[i].source_link
               }" class="btn_border">See Live</a>
               <a href="${
-                projects[i].liveLink
+                projects[i].live_link
               }" id="source_btn1" class="filled_btn source_btn">Source Code</a>
           </div>
       </div>
@@ -306,18 +328,18 @@ function projectHandle(projects) {
   for(let item of items){
   item.addEventListener("click",(e)=>{
     projectView(item.children[0].getAttribute("value"))
-    // console.log(e.target)
-    // const ele=
-    // console.log(ele.getAttribute("value"))
   
   })
   }
 }
+
+
+
 function experienceHandle(experience) {
   // experience section
 
   let experience_items = document.getElementById("experience_items");
-
+  console.log(experience)
   let exp_st = "";
   if(experience.length===0)
   {
@@ -334,12 +356,12 @@ function experienceHandle(experience) {
       exp_st +
       `
       <div class="experience_item">
-          <input style="display: none;" value="${experience[i].experienceId}">
-          <h3 class="experience_title">${experience[i].companyName}</h3>
+          <input style="display: none;" value="${experience[i].experience_id}">
+          <h3 class="experience_title">${experience[i].company_name}</h3>
           <p class="experience_role">${experience[i].role} | <span>${
             experience[i].years
       } years</span></p>
-          <p class="experience_detail">${DescSlice(experience[i].desc)}</p>
+          <p class="experience_detail">${DescSlice(experience[i].description)}</p>
           <button class="read_experience_btn btn_border read_more_handle">Read More</button>
       </div>
     
@@ -360,7 +382,14 @@ function skillsHandle() {}
 
 function contactHandle() {
   let contact_detail = document.getElementById("contact_detail");
-  let name = `${usersArr[0].firstName} ${usersArr[0].lastName}`;
+  if(contactArr.length===0 || user_infoArr.length===0)
+  {
+    const con_str=`   <p class="no_result_text white_text">No contact found</p>`
+    contact_detail.innerHTML = con_str;
+      return;
+  }
+  
+  let name = `${current_user[0].first_name} ${current_user[0].last_name}`;
   const con_str = `
   <h3 class="contact_name">${name}</h3>
   <p class="tag_contact_name">${user_infoArr[0].designation}</p>
@@ -388,6 +417,13 @@ function contactHandle() {
 
 function footerHandle() {
   let footer_socials = document.getElementById("footer_socials");
+  if(contactArr.length===0)
+  {
+    const con_str=`   <p class="no_result_text white_text">No socials found</p>`
+    footer_socials.innerHTML = con_str;
+    return;
+  }
+  
 
   const Links = [
     contactArr[0].linkedin,
@@ -403,7 +439,7 @@ function footerHandle() {
       str =
         str +
         `
-        <a href="${i}"><i class="fa-brands fa-${social_names[i]}"></i></a>
+        <a href="${Links[i]}"><i class="fa-brands fa-${social_names[i]}"></i></a>
         `;
     }
   }
@@ -414,8 +450,8 @@ function footerHandle() {
 function projectView(id) {
   // console.log("id clicked:"+parseInt(id))
   const receivedId=parseInt(id)
-  const clickedProject = dataReceieved.projectArr.filter((item) => {
-    return item.projectId === receivedId && item.userId === userId;
+  const clickedProject = projectsArr.filter((item) => {
+    return item.project_id === receivedId;
   });
 
   console.log(clickedProject)
@@ -436,25 +472,29 @@ function projectView(id) {
     `;
   }
   let lan_str='',tag_str=''
-
-  if(clickedProject[0].languages.length>0)
+  console.log("click:"+id)
+  const project_specific_tag_Arr=getProjectTag(id);
+  console.log(project_specific_tag_Arr)
+  const project_specific_lan_Arr=getProjectLanguages(id);
+  console.log(project_specific_lan_Arr)
+  if(project_specific_lan_Arr.length>0)
   {
-    for (let j = 0; j < clickedProject[0].languages.length; j++) 
+    for (let j = 0; j < project_specific_lan_Arr.length; j++) 
     {
 
       lan_str=lan_str+`
       
       <div class="lan_item">
-          <span class="lan_item_lan">${clickedProject[0].languages[j].lanName} <span  class="lan_item_per">${clickedProject[0].languages[j].lanPer}%</span></span>
-          <progress class="lan_item_pro" value='${clickedProject[0].languages[j].lanPer}' max="100"></progress>
+          <span class="lan_item_lan">${project_specific_lan_Arr[j].lan_name} <span  class="lan_item_per">${project_specific_lan_Arr[j].lan_percentage}%</span></span>
+          <progress class="lan_item_pro" value='${project_specific_lan_Arr[j].lan_percentage}' max="100"></progress>
       </div>
       
       `
     }
   }
-  if(clickedProject[0].tags.length>0)
+  if(project_specific_tag_Arr.length>0)
   {
-    for (let k = 0; k < clickedProject[0].tags.length; k++) 
+    for (let k = 0; k < project_specific_tag_Arr.length; k++) 
     {
       if(k==0)
       {
@@ -465,7 +505,7 @@ function projectView(id) {
       }
       tag_str=tag_str+`
       
-      <span class="tag_item">${clickedProject[0].tags[k].tagName}</span>
+      <span class="tag_item">${project_specific_tag_Arr[k].tag_name}</span>
       
       `
     }
@@ -477,7 +517,7 @@ function projectView(id) {
   let str =`
   ${media_str}
   <p class="model_title">${clickedProject[0].title}</p>
-  <p class="model_detail">${clickedProject[0].desc}</p>
+  <p class="model_detail">${clickedProject[0].description}</p>
   ${lan_str}
   ${tag_str}
   `
@@ -491,18 +531,18 @@ function projectView(id) {
 function experienceView(id) {
   // console.log("id clicked:"+parseInt(id))
   const receivedId=parseInt(id)
-  const clickedProject = dataReceieved.experienceArr.filter((item) => {
-    return item.experienceId === receivedId && item.userId === userId;
+  const clickedProject = experienceArr.filter((item) => {
+    return item.experience_id === receivedId ;
   });
 
   console.log(clickedProject)
   let str =`
-  <p class="model_title">${clickedProject[0].companyName}</p>
+  <p class="model_title">${clickedProject[0].company_name}</p>
   <p class="model_sub_title">${clickedProject[0].role}</p>
   <p class="model_date">${dateSlice(
-    experienceArr[0].startDate
-  )} - ${dateSlice(experienceArr[0].endDate)}</p>
-  <p class="model_detail">${clickedProject[0].desc}</p>`
+    experienceArr[0].start_date
+  )} - ${dateSlice(experienceArr[0].end_date)}</p>
+  <p class="model_detail">${clickedProject[0].description}</p>`
 
 
   model_content_handle.innerHTML = str;
@@ -516,7 +556,7 @@ function experienceView(id) {
 let logout_btn_handle = document.getElementById("logout_btn_handle");
 
 logout_btn_handle.addEventListener("click", () => {
-  localStorage.removeItem("userId");
+  localStorage.removeItem("auth_token");
   localStorage.removeItem("userRole");
 
   location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
@@ -557,40 +597,67 @@ project_search_form.addEventListener("submit",(e)=>{
   }else if(select_val==="all")
   {
     searchedProjectArr = projectsArr.filter((item) => {
-      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
+      const tArr=getProjectTag(item.project_id);
+      const lArr=getProjectLanguages(item.project_id);
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(lArr,input_val).length>0  || checkInTag(tArr,input_val).length>0 
     });
     console.log(searchedProjectArr)
   }else if(select_val==="lanName")
   {
-    searchedProjectArr =checkInLan(projectsArr,input_val)
+    searchedProjectArr =checkInLan(project_languageArr,input_val)
   }
   else if(select_val==="tagName")
   {
-    searchedProjectArr = checkInTag(projectsArr,input_val)
+    searchedProjectArr = checkInTag(project_tagArr,input_val)
   }
+  
   projectHandle(searchedProjectArr)
 
 
 });
 
+function getProjectsFromTag(tagArr){
+
+
+  return projectsArr.filter((item)=>{
+    for (let i = 0; i < tagArr.length; i++) {
+     if(tagArr[i].project_id===item.project_id)
+       { 
+        return item;
+      }
+      
+    }
+  })
+
+}
+function getProjectsFromLan(lanArr){
+  
+  return projectsArr.filter((item)=>{
+    for (let i = 0; i < lanArr.length; i++) {
+     if(lanArr[i].project_id===item.project_id)
+       { 
+        return item;
+      }
+      
+    }
+  })
+
+}
 
 function checkInDesc(projectsArr,input_val){
   return   projectsArr.filter((item) => {
-    return item.desc.toLowerCase().includes(input_val.toLowerCase());
+    return item.description.toLowerCase().includes(input_val.toLowerCase());
   });
 }
-function checkInTag(projectsArr,input_val){
-  return projectsArr.filter((item) => {
-    for (let i = 0; i < item.tags.length; i++) {
-      if(item.tags[i].tagName.toLowerCase().includes(input_val.toLowerCase()))
+function checkInTag(project_tagArr,input_val){
+  const tArr= project_tagArr.filter((item) => {
+      if(item.tag_name.toLowerCase().includes(input_val.toLowerCase()))
         {
           console.log(item)
           return item;
         }
-      
-    }
-    
   });
+  return getProjectsFromTag(tArr)
 }
 function checkInTitle(projectsArr,input_val){
  const searchedProjectArr = projectsArr.filter((item) => {
@@ -598,18 +665,16 @@ function checkInTitle(projectsArr,input_val){
   });
   return searchedProjectArr;
 }
-function checkInLan(projectsArr,input_val){
-  return projectsArr.filter((item) => {
-    for (let i = 0; i < item.languages.length; i++) {
-      if(item.languages[i].lanName.toLowerCase().includes(input_val.toLowerCase()))
+function checkInLan(project_languageArr,input_val){
+  const pLan=project_languageArr.filter((item) => {
+      if(item.lan_name.toLowerCase().includes(input_val.toLowerCase()))
         {
           console.log(item)
           return item;
         }
-      
-    }
-    
   });
+
+  return getProjectsFromLan(pLan)
 }
 
 search_project_keyword_input.onchange=function(){
@@ -627,16 +692,20 @@ search_project_keyword_input.onchange=function(){
   }else if(select_val==="all")
   {
     searchedProjectArr = projectsArr.filter((item) => {
-      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
+      const tArr=getProjectTag(item.project_id);
+      const lArr=getProjectLanguages(item.project_id);
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(lArr,input_val).length>0  || checkInTag(tArr,input_val).length>0 
     });
+    console.log(searchedProjectArr)
   }else if(select_val==="lanName")
   {
-    searchedProjectArr =checkInLan(projectsArr,input_val)
+    searchedProjectArr =checkInLan(project_languageArr,input_val)
   }
   else if(select_val==="tagName")
   {
-    searchedProjectArr = checkInTag(projectsArr,input_val)
+    searchedProjectArr = checkInTag(project_tagArr,input_val)
   }
+  
   projectHandle(searchedProjectArr)
  
 }
@@ -655,17 +724,22 @@ projectKeyword.onchange=function(){
   }else if(select_val==="all")
   {
     searchedProjectArr = projectsArr.filter((item) => {
-      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
+      const tArr=getProjectTag(item.project_id);
+      const lArr=getProjectLanguages(item.project_id);
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(lArr,input_val).length>0  || checkInTag(tArr,input_val).length>0 
     });
+    console.log(searchedProjectArr)
   }else if(select_val==="lanName")
   {
-    searchedProjectArr =checkInLan(projectsArr,input_val)
+    searchedProjectArr =checkInLan(project_languageArr,input_val)
   }
   else if(select_val==="tagName")
   {
-    searchedProjectArr = checkInTag(projectsArr,input_val)
+    searchedProjectArr = checkInTag(project_tagArr,input_val)
   }
+  
   projectHandle(searchedProjectArr)
+
 }
 
 
@@ -761,12 +835,12 @@ experienceKeyword.onchange=function(){
 
 function checkInExperienceDesc(expArr,input_val){
   return expArr.filter((item) => {
-    return item.desc.toLowerCase().includes(input_val.toLowerCase());
+    return item.description.toLowerCase().includes(input_val.toLowerCase());
   });
 }
 function checkInCompanyName(expArr,input_val){
   return expArr.filter((item) => {
-    return item.companyName.toLowerCase().includes(input_val.toLowerCase());
+    return item.company_name.toLowerCase().includes(input_val.toLowerCase());
   });
 }
 function checkInCompanyRole(expArr,input_val){

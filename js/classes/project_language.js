@@ -1,6 +1,6 @@
 import url from "../../utils/config.json" assert { type: "json" };
 
-export class projectLanguage {
+export class project_language {
   // initialize values in constructor
   constructor() {
     this.project_language_id = 0;
@@ -18,7 +18,7 @@ export class projectLanguage {
         method: "POST",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token,
+          "authorization":`Bearer ${token}`,
           "project_id":project_id
         },
         body: JSON.stringify(projectlanguage),
@@ -27,18 +27,18 @@ export class projectLanguage {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -54,7 +54,7 @@ export class projectLanguage {
         method: "PUT",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token, 
+          "authorization":`Bearer ${token}`, 
         },
         body: JSON.stringify(upprojectLanguage),
       });
@@ -62,18 +62,18 @@ export class projectLanguage {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -90,24 +90,24 @@ export class projectLanguage {
         method: "DELETE", 
         headers: {
           "content-type":"application/json",
-          "auth_token":token,
+          "authorization":`Bearer ${token}`,
           "project_id":project_id
         }
       });
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -118,35 +118,31 @@ export class projectLanguage {
     }
     
   }
-  getprojectLanguage=async(token)=> {
+  getprojectLanguages=async(token)=> {
 
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/projectlanguage`,{
+      const res = await fetch(`${url.BASE_URL}/api/projectlanguage`,{
           method:"GET",
           headers:{
               "content-type":"application/json",
-              "auth_token":token
+              "authorization":`Bearer ${token}`
           }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       
@@ -159,31 +155,27 @@ export class projectLanguage {
     
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/projectlanguage/${id}`,{
+      const res = await fetch(`${url.BASE_URL}/api/projectlanguage/${id}`,{
           method:"GET",
           headers:{
               "content-type":"application/json",
-              "auth_token":token
+              "authorization":`Bearer ${token}`
           }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       

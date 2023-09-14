@@ -11,14 +11,14 @@ export class User_registration {
   }
   // Perform CRUD
 
-  addUser=async(token,User) =>{
+  addUser=async(auth_token,User) =>{
     // read JSON file and append new User
     try {
       const res = await fetch(`${url.BASE_URL}/api/user`, {
         method: "POST",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "authorization":`Bearer ${auth_token}`
         },
         body: JSON.stringify(User),
       });
@@ -26,18 +26,18 @@ export class User_registration {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -47,13 +47,13 @@ export class User_registration {
       };
     }
   }
-  updateUser=async(token,UserId, upUser) =>{
+  updateUser=async(auth_token,id, upUser) =>{
     try {
-      const res = await fetch(`${url.BASE_URL}/api/user/${UserId}`, {
+      const res = await fetch(`${url.BASE_URL}/api/user/${id}`, {
         method: "PUT",
         headers: {
           "content-type": "application/x-www-form-urlencoded",
-          "auth_token":token
+          "authorization":`Bearer ${auth_token}`
         },
         body: JSON.stringify(upUser),
       });
@@ -61,18 +61,18 @@ export class User_registration {
 
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -83,29 +83,29 @@ export class User_registration {
     }
    
   }
-  deleteUser=async(token,id)=> {
+  deleteUser=async(auth_token)=> {
     try {
-      const res = await fetch(`${url.BASE_URL}/api/user/${id}`, {
+      const res = await fetch(`${url.BASE_URL}/api/user`, {
         method: "DELETE", 
         headers: {
           "content-type":"application/json",
-          "auth_token":token
+          "authorization":`Bearer ${auth_token}`
         }
       });
       const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
           };
       }
      
 
       return{
-        status:response.status,
+        status:res.status,
         message:result.message,
       };
     } catch (err) {
@@ -116,35 +116,64 @@ export class User_registration {
     }
     
   }
-  getUser=async(token)=> {
-
-
+  deleteSingleUser=async(auth_token,id)=> {
     try {
-      const response = await fetch(`${url.BASE_URL}/api/user`,{
-          method:"GET",
-          headers:{
-              "content-type":"application/json",
-              "auth_token":token
-          }
+      const res = await fetch(`${url.BASE_URL}/api/user/${id}`, {
+        method: "DELETE", 
+        headers: {
+          "content-type":"application/json",
+          "authorization":`Bearer ${auth_token}`
+        }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:res.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+    
+  }
+  getUsers=async(auth_token)=> {
+
+
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/user`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "authorization":`Bearer ${auth_token}`
+          }
+      });
+      const result = await res.json();
+
+      if([400,404,500,401].includes(res.status))
+      {
+          // not found
+          return {
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       
@@ -153,35 +182,31 @@ export class User_registration {
     }
   
   }
-  getSingleUser=async(token,id)=> {
+  getSingleUser=async(auth_token,id)=> {
     
 
     try {
-      const response = await fetch(`${url.BASE_URL}/api/user/${id}`,{
+      const res = await fetch(`${url.BASE_URL}/api/user/${id}`,{
           method:"GET",
           headers:{
               "content-type":"application/json",
-              "auth_token":token
+              "authorization":`Bearer ${auth_token}`
           }
       });
-      const result = await response.json();
+      const result = await res.json();
 
-      if([400,404,500,401].includes(response.status))
+      if([400,404,500,401].includes(res.status))
       {
           // not found
           return {
-            status:response.status,
+            status:res.status,
             message:result.message,
             result:""
           };
       }
      
 
-      return{
-        status:response.status,
-        message:result.message,
-        result
-      };
+      return result;
       
       
       

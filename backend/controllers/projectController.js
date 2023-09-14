@@ -20,13 +20,25 @@ const addProject=async({ res,
         '${body.live_link}',
         ${parseInt(verifiedUser.id)})
     `
+
+    const lastID=`
+    SELECT LAST_INSERT_ID()
+    `
     DBcon.query(addQuery,(err,result)=>{
         if(err)
         { 
             return serverErr(res,err)
         }
+        DBcon.query(lastID,(err,result2)=>{
+                res.writeHead(200, { "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET,PUT,DELETE",'Content-Type': 'text/html' });
+            res.write(JSON.stringify({
+                result:result2[0]["LAST_INSERT_ID()"],
+                message:"Successfull"
+            }))
+            return res.end()
+        })
         
-        return successRes(res);
     })
    
 }

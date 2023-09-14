@@ -1,46 +1,59 @@
-import dataReceieved from "../fetchData.js";
+
 import {
-  Project,
-  Contact,
-  User_Info,
   About,
+  Contact,
+  Education,
   Experience,
-  Education
+  Project,
+  project_language,
+  project_tag,
+  Skill,
+  User_Info
 } from "../links.js";
+import fetchDate from "../fetchData.js";
+
+// JS for index.html
+
+// onLoad I want to fecth data and display on index.html page
+let user_infoArr, aboutArr,contactArr,
+educationArr,experienceArr,projectsArr,
+skillsArr,project_languageArr,project_tagArr,current_user;
+const initialize=()=>{
+  user_infoArr = fetchDate.dataReceieved.user_infoArr;
+  aboutArr = fetchDate.dataReceieved.aboutArr;
+  contactArr = fetchDate.dataReceieved.contactArr;
+  educationArr = fetchDate.dataReceieved.educationArr;
+  experienceArr = fetchDate.dataReceieved.experienceArr;
+  projectsArr = fetchDate.dataReceieved.projectsArr;
+  skillsArr = fetchDate.dataReceieved.skillsArr;
+   project_languageArr=fetchDate.dataReceieved.project_languageArr;
+  project_tagArr=fetchDate.dataReceieved.project_tagArr;
+  current_user=fetchDate.dataReceieved.current_user;
+}
 // JS for profile.html
 
 // onLoad I want to fecth data and display on profile.html page
-let user_infoArr = [];
-let aboutArr = [];
-let contactArr = [];
-let educationArr = [];
-let experienceArr = [];
-let projectsArr = [];
-let skillsArr = [];
-
-let usersArr = [];
-
-let userId = 0;
 let userRole = "";
 let model_content_handle = document.getElementById("model_content_handle");
 
 
-userId = parseInt(localStorage.getItem("userId"));
+let auth_token = localStorage.getItem("auth_token");
 userRole = localStorage.getItem("userRole");
 
 if (userRole === "admin" || !userRole) {
-  localStorage.removeItem("userId");
+  localStorage.removeItem("auth_token");
   localStorage.removeItem("userRole");
 
   location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
 }
 let myModal = document.getElementById("myModal");
-  window.onload = function () {
+  window.onload = async function () {
   // I have to get id from local storage after login and then find data from dataReceived based on id
   // and then passed to each function
   document.getElementById("loading").style.display="none"
 
-  userSpecificData();
+  await fetchDate.run();
+  initialize()
   modifyDOM();
 };
 
@@ -56,88 +69,83 @@ function modifyDOM() {
   footerHandle();
 }
 
-function userSpecificData() {
-  // specific user data
-  aboutArr = dataReceieved.aboutData.filter((item) => {
-    return item.userId === userId;
-  });
-
-  user_infoArr = dataReceieved.user_infoArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  contactArr = dataReceieved.contactArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  educationArr = dataReceieved.educationArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  experienceArr = dataReceieved.experienceArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  skillsArr = dataReceieved.skillArr.filter((item) => {
-    return item.userId === userId;
-  });
-
-  projectsArr = dataReceieved.projectArr.filter((item) => {
-    return item.userId === userId;
-  });
-  usersArr = dataReceieved.User_registration.filter((item) => {
-    return item.userId === userId;
-  });
-
-  console.log(aboutArr);
-  console.log(contactArr);
-  console.log(usersArr);
+const getProjectTag=(id)=>{
+  id=parseInt(id)
+  return project_tagArr.filter((item) => {
+          return item.project_id === id;
+        });
 }
+const getProjectLanguages=(id)=>{
+  id=parseInt(id)
+  return project_languageArr.filter((item) => {
+    return item.project_id === id;
+  });
+}
+
 function navHandle() {
   let user_name = document.getElementById("user_name");
-  const name = usersArr[0].lastName;
+  const name = current_user[0].last_name;
   let str = `<a href="/index.html" class="logo_link">${name}</a>`;
   user_name.innerHTML = str;
 }
 
 function headerHandle() {
   let socials_header = document.getElementById("socials_header");
-  const Links = [
-    contactArr[0].linkedin,
-    contactArr[0].twitter,
-    contactArr[0].github,
-    contactArr[0].instagram,
-  ];
-  console.log(Links);
-  const social_names = ["linkedin", "twitter", "github", "instagram"];
-  let str = "";
-  for (let i = 0; i < Links.length; i++) {
-    if (Links[i].length != 0) {
-      str =
-        str +
-        `
-              <div class="header_social_item contact_item">
-              <a href="${i}"><i class="fa-brands fa-${social_names[i]}"></i></a>
-              <span class="header_social_link contact_detail"><a href="${i}">${Links[i]}</a></span>
-          </div>
-              `;
-    }
-  }
 
-  socials_header.innerHTML = str;
+  if(contactArr.length>0)
+  {
+    const Links = [
+      contactArr[0].linkedin,
+      contactArr[0].twitter,
+      contactArr[0].github,
+      contactArr[0].instagram,
+    ];
+    console.log(Links);
+    const social_names = ["linkedin", "twitter", "github", "instagram"];
+    let str = "";
+    for (let i = 0; i < Links.length; i++) {
+      if (Links[i].length != 0) {
+        str =
+          str +
+          `
+                <div class="header_social_item contact_item">
+                <a href="${Links[i]}"><i class="fa-brands fa-${social_names[i]}"></i></a>
+                <span class="header_social_link contact_detail"><a href="${i}">${Links[i]}</a></span>
+            </div>
+                `;
+      }
+    }
+  
+    socials_header.innerHTML = str;
+
+  }else
+  {
+    socials_header.innerHTML = `
+    <p class="no_result_text white_text">Add socials</p>
+    `;
+  }
 }
 
 function infoHandle() {
   let info_id = document.getElementById("info_id");
 
-  const name = usersArr[0].firstName + " " + usersArr[0].lastName;
+  if(user_infoArr.length===0 || educationArr.length===0 || contactArr.length===0)
+  {
+    info_id.innerHTML=`
+    <p class="no_result_text">Add information</p>
+    
+    `
+    return;
+  }
+
+  const name = current_user[0].first_name + " " + current_user[0].last_name;
   let infoStr = `
     <div class="info_start_container">
         <h3 class="info_name">${name}</h3>
         <h4 class="info_designation">${user_infoArr[0].designation}</h4>
     </div>
     <div class="recent_education_container">
-        <p class="recent_university_name">${educationArr[0].instituteName}</p>
+        <p class="recent_university_name">${educationArr[0].institute_name}</p>
         <p class="university_location">${educationArr[0].location}</p>
     </div>
     <div class="personal_contact_container">
@@ -183,9 +191,17 @@ function dateSlice(dt) {
     `;
 }
 function aboutHandle() {
-  let about_profile = document.getElementById("about_profile");
 
-  about_profile.innerText = aboutArr[0].desc;
+  let about_profile = document.getElementById("about_profile");
+  if(aboutArr.length===0)
+  {
+    about_profile.innerHTML=`
+    <p class="no_result_text white_text">Add about</p>
+    
+    `
+    return;
+  }
+  about_profile.innerText = aboutArr[0].description;
 }
 
 function projectHandle(project) {
@@ -220,25 +236,27 @@ function projectHandle(project) {
     }
 
     let lan_str='',tag_str=''
-
-    if(project[i].languages.length>0)
+    const p_id=project[i].project_id;
+    const project_specific_tag_Arr=getProjectTag(p_id);
+    const project_specific_lan_Arr=getProjectLanguages(p_id);
+    if(project_specific_lan_Arr.length>0)
     {
-      for (let j = 0; j < project[i].languages.length; j++) 
+      for (let j = 0; j < project_specific_lan_Arr.length; j++) 
       {
 
         lan_str=lan_str+`
         
         <div class="lan_item">
-            <span class="lan_item_lan">${project[i].languages[j].lanName} <span  class="lan_item_per">${project[i].languages[j].lanPer}%</span></span>
-            <progress class="lan_item_pro" value='${project[i].languages[j].lanPer}' max="100"></progress>
+            <span class="lan_item_lan">${project_specific_lan_Arr[j].lan_name} <span  class="lan_item_per">${project_specific_lan_Arr[j].lan_percentage}%</span></span>
+            <progress class="lan_item_pro" value='${project_specific_lan_Arr[j].lan_percentage}' max="100"></progress>
         </div>
         
         `
       }
     }
-    if(project[i].tags.length>0)
+    if(project_specific_tag_Arr.length>0)
     {
-      for (let k = 0; k < project[i].tags.length; k++) 
+      for (let k = 0; k < project_specific_tag_Arr.length; k++) 
       {
         if(k==0)
         {
@@ -249,7 +267,7 @@ function projectHandle(project) {
         }
         tag_str=tag_str+`
         
-        <span class="tag_item">${project[i].tags[k].tagName}</span>
+        <span class="tag_item">${project_specific_tag_Arr[k].tag_name}</span>
         
         `
       }
@@ -267,11 +285,11 @@ function projectHandle(project) {
             <div class="item_info">
                 <p class="item_heading">${project[i].title}</p>
                 <h3 class="item_date">${dateSlice(
-                  project[i].startDate
-                )} - ${dateSlice(project[i].endDate)}</h3>
+                  project[i].start_date
+                )} - ${dateSlice(project[i].end_date)}</h3>
             </div>
         </div>
-        <p class="item_p">${project[i].desc}</p>
+        <p class="item_p">${project[i].description}</p>
         ${lan_str}
         ${tag_str}
         <hr class="item_divider">
@@ -307,12 +325,12 @@ function experienceHandle(experience) {
 
         <div class="fetched_item">
         
-        <p class="item_heading">${experience[i].companyName}</p>
+        <p class="item_heading">${experience[i].company_name}</p>
         <p class="item_sub_heading">${experience[i].role}</p>
         <h3 class="item_date">${dateSlice(
-          experience[i].startDate
-        )} - ${dateSlice(experience[i].endDate)}</h3>
-        <p class="item_p">${experience[i].desc}</p>
+          experience[i].start_date
+        )} - ${dateSlice(experience[i].end_date)}</h3>
+        <p class="item_p">${experience[i].description}</p>
         <hr class="item_divider">
         </div>
         
@@ -345,13 +363,13 @@ function educationHandle(education) {
     
             <div class="fetched_item">
         
-            <p class="item_heading">${education[i].instituteName}</p>
+            <p class="item_heading">${education[i].institute_name}</p>
             <p class="item_sub_heading">${education[i].degree}</p>
             <p class="item_sub_heading">${education[i].location}</p>
             <h3 class="item_date">${dateSlice(
-              education[i].startDate
-            )} - ${dateSlice(education[i].endDate)}</h3>
-            <p class="item_p">${education[i].desc}</p>
+              education[i].start_date
+            )} - ${dateSlice(education[i].end_date)}</h3>
+            <p class="item_p">${education[i].description}</p>
             <hr class="item_divider">
             </div>
             
@@ -365,6 +383,16 @@ function skillsHandle() {
   let profile_skills_items = document.getElementById("profile_skills_items");
   let skill_str = "";
 
+  if(skillsArr.length===0)
+  {
+    profile_skills_items.innerHTML = `
+    <p class="no_result_text">No skill found</p>
+    
+    `;
+
+    return;
+  }
+
   console.log(skillsArr);
 
   for (let i = 0; i < skillsArr.length; i++) {
@@ -373,10 +401,10 @@ function skillsHandle() {
       `
         
         <div class="fetched_item">
-        <p class="item_heading">${skillsArr[i].skillName}</p>
+        <p class="item_heading">${skillsArr[i].skill_name}</p>
         <h3 class="item_date">${dateSlice(
-          skillsArr[i].startDate
-        )} - ${dateSlice(skillsArr[i].endDate)}</h3>
+          skillsArr[i].start_date
+        )} - ${dateSlice(skillsArr[i].end_date)}</h3>
         <hr class="item_divider">
         </div>
         `;
@@ -387,6 +415,16 @@ function skillsHandle() {
 
 function footerHandle() {
   let footer_socials = document.getElementById("footer_socials");
+
+  if(contactArr.length===0)
+  {
+    footer_socials.innerHTML = `
+    
+    <p class="no_result_text white_text">No contact found</p>
+    `;
+
+    return;
+  }
   console.log(footer_socials);
   const Links = [
     contactArr[0].linkedin,
@@ -402,7 +440,7 @@ function footerHandle() {
       str =
         str +
         `
-          <a href="${i}"><i class="fa-brands fa-${social_names[i]}"></i></a>
+          <a href="${Links[i]}"><i class="fa-brands fa-${social_names[i]}"></i></a>
           `;
     }
   }
@@ -415,7 +453,7 @@ function footerHandle() {
 let logout_btn_handle = document.getElementById("logout_btn_handle");
 
 logout_btn_handle.addEventListener("click", () => {
-  localStorage.removeItem("userId");
+  localStorage.removeItem("auth_token");
   localStorage.removeItem("userRole");
 
   location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
@@ -423,10 +461,248 @@ logout_btn_handle.addEventListener("click", () => {
 
 
 
-// -------------- Handle different sections edit
+// function handle CRUD and update dom--------------
+
+// about
+
+const aboutUpdate=async(upObj)=>{
+  const aboutObj=new About();
+    // update about
+  await aboutObj.updateAbout(auth_token,aboutArr[0].about_id,upObj);
+  // get updated about
+  aboutArr= await aboutObj.getAbouts(auth_token);
+  // update dom
+  aboutHandle();
+}
+const aboutAdd=async(upObj)=>{
+  const aboutObj=new About();
+    // update about
+  await aboutObj.addAbout(auth_token,upObj);
+  // get updated about
+  aboutArr= await aboutObj.getAbouts(auth_token);
+  // update dom
+  aboutHandle();
+}
+// experience
+
+const experienceUpdate=async(upObj,id)=>{
+
+  const experienceObj=new Experience();
+    // update about
+  await experienceObj.updateExperience(auth_token,id,upObj);
+  // get updated about
+  experienceArr= await experienceObj.getExperiences(auth_token);
+  // update dom
+  experienceHandle(experienceArr);
+
+}
+const experienceDelete=async(id)=>{
+  const experienceObj=new Experience();
+  // update about
+  await experienceObj.deleteExperience(auth_token,id);
+  // get updated about
+  experienceArr= await experienceObj.getExperiences(auth_token);
+  // update dom
+  experienceHandle(experienceArr);
+
+ 
+
+}
+const experienceAdd=async(obj)=>{
+  const experienceObj=new Experience();
+  // update about
+  await experienceObj.addExperience(auth_token,obj);
+  // get updated about
+  experienceArr= await experienceObj.getExperiences(auth_token);
+  // update dom
+  experienceHandle(experienceArr);
+
+}
+// education
+
+const educationUpdate=async(upObj,id)=>{
+
+  const educationObj=new Education();
+    // update about
+  await educationObj.updateEducation(auth_token,id,upObj);
+  // get updated about
+  educationArr= await educationObj.getEducations(auth_token);
+  // update dom
+  educationHandle(educationArr);
+
+}
+const educationDelete=async(id)=>{
+  const educationObj=new Education();
+    // update 
+  await educationObj.deleteEducation(auth_token,id);
+  // get updated 
+  educationArr= await educationObj.getEducations(auth_token);
+  // update dom
+  educationHandle(educationArr);
+
+}
+const educationAdd=async(obj)=>{
+  const educationObj=new Education();
+  // update 
+  await educationObj.addEducation(auth_token,obj);
+  // get updated 
+  educationArr= await educationObj.getEducations(auth_token);
+  // update dom
+  educationHandle(educationArr);
+
+}
+// contact
+
+const contactUpdate=async(upObj)=>{
+  const contactObj=new Contact();
+  // update about
+  await contactObj.updateContact(auth_token,contactArr[0].contact_id,upObj);
+  // get updated about
+  contactArr= await contactObj.getContacts(auth_token);
+  // update dom
+  headerHandle();
+  infoHandle();
+}
+const contactAdd=async(upObj)=>{
+  const contactObj=new Contact();
+  // update about
+  await contactObj.addContact(auth_token,upObj);
+  // get updated about
+  contactArr= await contactObj.getContacts(auth_token);
+  // update dom
+  headerHandle();
+  infoHandle();
+  footerHandle();
+}
+// project
+
+const projectUpdate=async(upObj,id)=>{
+
+  const projectObj=new Project();
+    // update about
+  await projectObj.updateProject(auth_token,id,upObj);
+  // get updated about
+  projectsArr= await projectObj.getProjects(auth_token);
+  // update dom
+  projectHandle(projectsArr);
+
+}
+const projectDelete=async(id)=>{
+
+  const projectObj=new Project();
+    // update about
+  await projectObj.deleteProject(auth_token,id);
+  // get updated about
+  projectsArr= await projectObj.getProjects(auth_token);
+  // update dom
+  projectHandle(projectsArr);
+
+}
+const projectAdd=async(upObj)=>{
+
+  const projectObj=new Project();
+    // update about
+  const response=await projectObj.addProject(auth_token,upObj);
+  console.log(response)
+  console.log(response.lastid)
+  // get updated about
+  projectsArr= await projectObj.getProjects(auth_token);
+  // update dom
+  projectHandle(projectsArr);
+
+  return response.lastid
+
+}
+
+
+// user_info
+
+const userinfoUpdate=async(upObj)=>{
+  const userinfoObj=new User_Info();
+  // update 
+  await userinfoObj.updateUserInfo(auth_token,user_infoArr[0].user_info_id,upObj);
+  // get updated 
+  user_infoArr= await userinfoObj.getUserInfos(auth_token);
+  // update dom
+  infoHandle();
+}
+const userinfoAdd=async(upObj)=>{
+  const userinfoObj=new User_Info();
+  // update 
+  await userinfoObj.addUserInfo(auth_token,upObj);
+  // get updated 
+  user_infoArr= await userinfoObj.getUserInfos(auth_token);
+  // update dom
+  infoHandle();
+}
+// skill
+// project_language
+
+const projectlanguageAdd=async(adObj,pid)=>{
+  const planguageObj=new project_language();
+
+  // add
+   await planguageObj.addprojectLanguage(auth_token,pid,adObj);
+  //  update 
+   project_languageArr=await planguageObj.getprojectLanguages(auth_token);
+}
+const projectlanguageDelete=async(pid)=>{
+  const planguageObj=new project_language();
+
+  // delete
+   await planguageObj.deleteAllprojectLanguage(auth_token,pid);
+  //  update 
+   project_languageArr=await planguageObj.getprojectLanguages(auth_token);
+}
+
+
+// project_tag
+
+const projecttagAdd=async(adObj,pid)=>{
+  const ptagObj=new project_tag();
+
+  // add
+   await ptagObj.addProjectTag(auth_token,pid,adObj);
+  //  update 
+   project_tagArr=await ptagObj.getProjectTags(auth_token);
+}
+const projecttagDelete=async(apid)=>{
+  const ptagObj=new project_tag();
+ 
+  // delete
+   await ptagObj.deleteAllProjectTag(auth_token,apid);
+  //  update 
+   project_tagArr=await ptagObj.getProjectTags(auth_token);
+}
+
+// -------------- Handle different sections edit--------------
 
 let socials_handle=document.getElementById("socials_handle")
 socials_handle.addEventListener("click",()=>{
+
+  let cArr=[]
+  if(contactArr.length===0)
+  {
+    cArr={
+        email:'',
+        phone:'',
+        instagram:'',
+        linkedin:'',
+        twitter:'',
+        github:'',
+      }
+  }
+  else
+  {
+    cArr={
+        email:contactArr[0].email,
+        phone:contactArr[0].phone,
+        instagram:contactArr[0].instagram,
+        linkedin:contactArr[0].linkedin,
+        twitter:contactArr[0].twitter,
+        github:contactArr[0].github,
+      }
+  }
   // handle socials edit model
   let str=`<form id="socials_edit_form">
   <div>
@@ -435,7 +711,7 @@ socials_handle.addEventListener("click",()=>{
         type="email"
         id="email"
         name="email"
-        value=${contactArr[0].email}
+        value='${cArr.email}'
         class='input_field'
         required
       />
@@ -446,7 +722,7 @@ socials_handle.addEventListener("click",()=>{
         type="text"
         id="phone"
         name="phone"
-        value=${contactArr[0].phone}
+        value='${cArr.phone}'
         class='input_field'           
        placeholder='Enter Phone Number'
         required
@@ -457,7 +733,7 @@ socials_handle.addEventListener("click",()=>{
     <input
       type="text"
       id="instagram"
-      value=${contactArr[0].instagram}
+      value='${cArr.instagram}'
       name="instagram"
       class='input_field'
     />
@@ -468,7 +744,7 @@ socials_handle.addEventListener("click",()=>{
       type="text"
       id="twitter"
       name="twitter"
-      value=${contactArr[0].twitter}
+      value='${cArr.twitter}'
       class='input_field'
       
     />
@@ -479,7 +755,7 @@ socials_handle.addEventListener("click",()=>{
       type="text"
       id="linkedin"
       name="linkedin"
-      value=${contactArr[0].linkedin}
+      value='${cArr.linkedin}'
       class='input_field'
       required
     />
@@ -490,7 +766,7 @@ socials_handle.addEventListener("click",()=>{
       type="text"
       id="github"
       name="github"
-      value=${contactArr[0].github}
+      value='${cArr.github}'
       class='input_field'
       placeholder='Enter Link for github'
       
@@ -507,10 +783,11 @@ socials_handle.addEventListener("click",()=>{
   myModal.style.display="block"
 
   let socials_edit_form=document.getElementById("socials_edit_form")
-  socials_edit_form.addEventListener("submit",(e)=>{
+  socials_edit_form.addEventListener("submit",async(e)=>{
     e.preventDefault();
     const data = new FormData(e.target);
     const obj = Object.fromEntries(data);
+
     const updatedVersion={
       email: obj.email,
       phone: obj.phone,
@@ -520,11 +797,15 @@ socials_handle.addEventListener("click",()=>{
       github: obj.github,
     }
     
-    const conObj=new Contact();
-    
-    conObj.updateContact(userId,updatedVersion);
-    
-    
+    if(contactArr.length===0)
+    {
+      await contactAdd(updatedVersion)
+    }
+    else
+    {
+
+      await contactUpdate(updatedVersion)
+    }
     
     myModal.style.display="none"
 
@@ -537,6 +818,23 @@ let info_handle=document.getElementById("info_handle")
 
 info_handle.addEventListener("click",()=>{
 
+  let iArr={};
+
+  if(user_infoArr.length===0)
+  {
+    iArr={
+      designation:"",
+      location:""
+    }
+  }
+  else
+  {
+    iArr={
+      designation:user_infoArr[0].designation,
+      location:user_infoArr[0].location
+    }
+  }
+
   let str=`
   <h2> Update User info </h2>
   <form id="info_update_form">
@@ -546,7 +844,7 @@ info_handle.addEventListener("click",()=>{
         type="text"
         id="designation"
         name="designation"
-        value='${user_infoArr[0].designation}'
+        value='${iArr.designation}'
         class='input_field'
         placeholder='Enter designation'
         required
@@ -558,7 +856,7 @@ info_handle.addEventListener("click",()=>{
           type="text"
           id="location"
           name="location"
-          value='${user_infoArr[0].location}'
+          value='${iArr.location}'
           class='input_field'
           placeholder='Enter location separated by commas'
           
@@ -573,7 +871,7 @@ info_handle.addEventListener("click",()=>{
   myModal.style.display="block"
 
   let info_update_form=document.getElementById("info_update_form")
-  info_update_form.addEventListener("submit",(e)=>{
+  info_update_form.addEventListener("submit",async(e)=>{
     e.preventDefault();
     const data = new FormData(e.target);
     const obj = Object.fromEntries(data);
@@ -582,9 +880,14 @@ info_handle.addEventListener("click",()=>{
       location: obj.location,
     }
     
-    const userInfoObj=new User_Info();
-    
-    userInfoObj.updateuserInfo(userId,updateuserInfo);
+    if(user_infoArr.length===0)
+    {
+      await userinfoAdd(updateuserInfo)
+    }
+    else
+    {
+      await userinfoUpdate(updateuserInfo)
+    }
 
     myModal.style.display="none"
  
@@ -597,12 +900,25 @@ let about_handle=document.getElementById("about_handle")
 about_handle.addEventListener("click",()=>{
   // handle about section edit model
 
+  let aArr={};
+  if(aboutArr.length===0)
+  {
+    aArr={
+      description:""
+    }
+  }
+  else
+  {
+    aArr={
+      description:aboutArr[0].description
+    }
+  }
   let str=`
   <h2> Edit About </h2>
   <form id="about_edit_form">
   <div className=''>
   <label for="desc" class="label_input">Enter Description</label>
-  <textarea id="desc" name="desc" class="input_field" rows="4" cols="50">${aboutArr[0].desc}</textarea>
+  <textarea id="desc" name="desc" class="input_field" rows="4" cols="50">${aArr.description}</textarea>
   <br>
     </div>
     
@@ -616,20 +932,23 @@ about_handle.addEventListener("click",()=>{
   myModal.style.display="block"
 
   let about_edit_form=document.getElementById("about_edit_form")
-  about_edit_form.addEventListener("submit",(e)=>{
+  about_edit_form.addEventListener("submit",async(e)=>{
     e.preventDefault();
     const data = new FormData(e.target);
     const obj = Object.fromEntries(data);
     const updatedVersion={
-      desc: obj.desc,
+      description: obj.desc,
     }
-    
-    const aboutObj=new About();
-    
-    aboutObj.updateAbout(userId,updatedVersion);
-    
-    
-    
+  
+    if(aboutArr.length===0)
+    {
+      await aboutAdd(updatedVersion);
+    }
+    else
+    {
+      await aboutUpdate(updatedVersion)
+    }
+
     myModal.style.display="none"
 
   })
@@ -642,51 +961,72 @@ let experience_handle=document.getElementById("experience_handle")
 experience_handle.addEventListener("click",()=>{
   let experienceStr = "";
 
-  for (let i = 0; i < experienceArr.length; i++) {
-    experienceStr =
-      experienceStr +
-      `
+  console.log(experienceArr)
+  console.log(experienceArr.length)
 
-        <div class="fetched_item section_container_css">
-          <input style="display: none;" value="${experienceArr[i].experienceId}">
-          <div class="item_controls edit_btn">
-            <i class="fa-solid fa-pen  experience_model_item_edit_handle"></i>
-            <i class="fa-solid fa-trash experience_model_item_delete_handle" ></i>
-          </div>
-          <p class="item_heading">${experienceArr[i].companyName}</p>
-          <p class="item_sub_heading">${experienceArr[i].role}</p>
-          <h3 class="item_date">${dateSlice(
-            experienceArr[i].startDate
-          )} - ${dateSlice(experienceArr[i].endDate)}</h3>
-          <p class="item_p">${experienceArr[i].desc}</p>
-          <hr class="item_divider">
-        </div>
-        
-        `;
+  if(experienceArr.length>0)
+  {
+
+      for (let i = 0; i < experienceArr.length; i++) {
+        experienceStr =
+          experienceStr +
+          `
+    
+            <div class="fetched_item section_container_css">
+              <input style="display: none;" value="${experienceArr[i].experience_id}">
+              <div class="item_controls edit_btn">
+                <i class="fa-solid fa-pen  experience_model_item_edit_handle"></i>
+                <i class="fa-solid fa-trash experience_model_item_delete_handle" ></i>
+              </div>
+              <p class="item_heading">${experienceArr[i].company_name}</p>
+              <p class="item_sub_heading">${experienceArr[i].role}</p>
+              <h3 class="item_date">${dateSlice(
+                experienceArr[i].start_date
+              )} - ${dateSlice(experienceArr[i].end_date)}</h3>
+              <p class="item_p">${experienceArr[i].description}</p>
+              <hr class="item_divider">
+            </div>
+            
+            `;
+      }
+    
+    
+      experienceStr=`
+    <div class="section_container_css add_btn_container">
+        <button class="filled_btn add_btn" id="Add_experience_btn">Add Experience </button>
+        ${experienceStr}
+    </div>
+    `
+      model_content_handle.innerHTML=experienceStr
+      myModal.style.display="block"
+    
+      const items = document.getElementsByClassName('experience_model_item_edit_handle');
+    for(let item of items){
+    item.addEventListener("click",(e)=>{
+      experienceForm(item.parentNode.parentNode.children[0].getAttribute("value"))
+    })
+    }
+      const items2 = document.getElementsByClassName('experience_model_item_delete_handle');
+    for(let item of items2){
+    item.addEventListener("click",(e)=>{
+      experienceDeleteHandle(item.parentNode.parentNode.children[0].getAttribute("value"))
+      myModal.style.display="none"
+    })
+    }
+  }
+  else
+  {
+    
+    experienceStr=`
+    <div class="section_container_css add_btn_container">
+        <button class="filled_btn add_btn" id="Add_experience_btn">Add Experience </button>
+        <p class="no_result_text">No experience found</p>
+    </div>
+    `
+    model_content_handle.innerHTML=experienceStr
+      myModal.style.display="block"
   }
 
-
-  experienceStr=`
- <div class="section_container_css add_btn_container">
-     <button class="filled_btn add_btn" id="Add_experience_btn">Add Experience </button>
-     ${experienceStr}
- </div>
- `
-  model_content_handle.innerHTML=experienceStr
-  myModal.style.display="block"
-
-  const items = document.getElementsByClassName('experience_model_item_edit_handle');
- for(let item of items){
- item.addEventListener("click",(e)=>{
-  experienceForm(item.parentNode.parentNode.children[0].getAttribute("value"))
- })
- }
-  const items2 = document.getElementsByClassName('experience_model_item_delete_handle');
- for(let item of items2){
- item.addEventListener("click",(e)=>{
-  experienceDeleteHandle(item.parentNode.parentNode.children[0].getAttribute("value"))
- })
- }
 
  const Add_experience_btn=document.getElementById("Add_experience_btn")
  Add_experience_btn.addEventListener("click",()=>{
@@ -695,10 +1035,10 @@ experience_handle.addEventListener("click",()=>{
 
 })
 
-function experienceDeleteHandle(id)
+async function experienceDeleteHandle(id)
 {
-  const expObj=new Experience();
-  expObj.deleteExperience(id)
+  await experienceDelete(id)
+ 
 }
 
 function experienceForm(id)
@@ -708,10 +1048,11 @@ function experienceForm(id)
   let receivedId=undefined;
   if(id)
   {
+    console.log("Inside update sec")
 
     receivedId=parseInt(id)
     const clickedProject = experienceArr.filter((item) => {
-      return item.experienceId === receivedId && item.userId === userId;
+      return item.experience_id === receivedId;
     });
     str=` <form id="experience_add_form">
     <div className=''>
@@ -720,7 +1061,7 @@ function experienceForm(id)
         type="text"
         id="companyName"
         name="companyName"
-        value='${clickedProject[0].companyName}'
+        value='${clickedProject[0].company_name}'
         class='input_field'
         required
       />
@@ -742,7 +1083,7 @@ function experienceForm(id)
           type="date"
           id="experience_s_date"
           name="startDate"
-          value='${clickedProject[0].startDate}'
+          value='${clickedProject[0].start_date}'
           class='input_field'
           required
         />
@@ -753,7 +1094,7 @@ function experienceForm(id)
             type="date"
             id="experience_e_date"
             name="endDate"
-            value='${clickedProject[0].endDate}'
+            value='${clickedProject[0].end_date}'
             class='input_field'
             required
           />
@@ -764,7 +1105,7 @@ function experienceForm(id)
                 type="text"
                 id="desc"
                 name="desc"
-                value='${clickedProject[0].desc}'
+                value='${clickedProject[0].description}'
                 class='input_field'
                 required
               />
@@ -836,7 +1177,6 @@ function experienceForm(id)
 </form>
 `
   }
-  console.log(`update id::`+id)
 
   model_content_handle.innerHTML=str;
   myModal.style.display="block";
@@ -844,33 +1184,45 @@ function experienceForm(id)
 
   let experience_add_form=document.getElementById("experience_add_form")
 
-  experience_add_form.addEventListener("submit",(e)=>{
+  experience_add_form.addEventListener("submit",async(e)=>{
     e.preventDefault();
     const data = new FormData(e.target);
     const obj = Object.fromEntries(data);
+
     let sDate=new Date(obj.startDate)
     let eDate=new Date(obj.endDate)
+
     let year=eDate.getFullYear()-sDate.getFullYear();
-    const updatedVersion={
-      userId:userId,
-      companyName: obj.companyName,
-      role: obj.role,
-      startDate: obj.startDate,
-      endDate: obj.endDate,
-      years: year,
-      desc: obj.desc,
+
+    if(year<0)
+    {
+      alert("Enter valid end date")
+      experience_add_form.reset();
+      return;
     }
 
+    const updatedVersion={
+      company_name: obj.companyName,
+      role: obj.role,
+      start_date: obj.startDate,
+      end_date: obj.endDate,
+      years: year,
+      description: obj.desc,
+    }
 
-    let expObj=new Experience();
-    if(receivedId)
+    
+
+    // let expObj=new Experience();
+    if(id)
     {
-      expObj.updateExperience(userId,receivedId,updatedVersion);
-      
+      console.log("update experience")
+      await experienceUpdate(updatedVersion,receivedId);
     }
     else
     {
-      expObj.addExperience(updatedVersion);
+      console.log("add experience")
+      await experienceAdd(updatedVersion)   
+     
     }
     
     myModal.style.display = "none";
@@ -886,112 +1238,131 @@ project_handle.addEventListener("click",()=>{
    // handle project section edit model
    let pro_str = "";
 
-   for (let i = 0; i < projectsArr.length; i++) {
-     let media_str = "";
-     if (projectsArr[i].exe === ".mp4") {
-       media_str = `
-       <div class="item_media">
-         <video class="project_media" controls>
-             <source src=${projectsArr[i].file} type="video/mp4">
-             </video>
-         </div>
-       `;
-     } else {
-       media_str = `
-       <div class="item_media">
-                    <img src=${projectsArr[i].file} width="150">
-     </div>
-       `;
-     }
-
-     let lan_str='',tag_str=''
-
-     if(projectsArr[i].languages.length>0)
-     {
-       for (let j = 0; j < projectsArr[i].languages.length; j++) 
-       {
- 
-         lan_str=lan_str+`
-         
-         <div class="lan_item">
-             <span class="lan_item_lan">${projectsArr[i].languages[j].lanName} <span  class="lan_item_per">${projectsArr[i].languages[j].lanPer}%</span></span>
-             <progress class="lan_item_pro" value='${projectsArr[i].languages[j].lanPer}' max="100"></progress>
-         </div>
-         
-         `
-       }
-     }
-     if(projectsArr[i].tags.length>0)
-     {
-       for (let k = 0; k < projectsArr[i].tags.length; k++) 
-       {
-         if(k==0)
-         {
-           tag_str=tag_str+`
-           <div class="tag_container">
-           <p class="tag_head"> Tags:</p>
-           `
-         }
-         tag_str=tag_str+`
-         
-         <span class="tag_item">${projectsArr[i].tags[k].tagName}</span>
-         
-         `
-       }
- 
-       tag_str=tag_str+`
-       </div>
-       `
-     }
-     pro_str =
-       pro_str +
-       `
-       <div class="fetched_item section_container_css">
-        <input style="display: none;" value="${projectsArr[i].projectId}">
-        <div class="project_item_controls edit_btn">
-            <i class="fa-solid fa-pen  project_model_item_edit_handle"></i>
-            <i class="fa-solid fa-trash project_model_item_delete_handle" ></i>
+   if(projectsArr.length>0)
+   {
+      for (let i = 0; i < projectsArr.length; i++) {
+        let media_str = "";
+        if (projectsArr[i].exe === ".mp4") {
+          media_str = `
+          <div class="item_media">
+            <video class="project_media" controls>
+                <source src=${projectsArr[i].file} type="video/mp4">
+                </video>
+            </div>
+          `;
+        } else {
+          media_str = `
+          <div class="item_media">
+                  <img src=${projectsArr[i].file} width="150">
         </div>
-          <div class="item_detail_section">
-              ${media_str}
-              <div class="item_info">
-
-                  <p class="item_heading">${projectsArr[i].title}</p>
-                  <h3 class="item_date">${dateSlice(
-                    projectsArr[i].startDate
-                  )} - ${dateSlice(projectsArr[i].endDate)}</h3>
-              </div>
+          `;
+        }
+    
+        let lan_str='',tag_str=''
+        const p_id=projectsArr[i].project_id;
+        const project_specific_tag_Arr=getProjectTag(p_id);
+        const project_specific_lan_Arr=getProjectLanguages(p_id);
+    
+        if(project_specific_lan_Arr.length>0)
+        {
+          for (let j = 0; j < project_specific_lan_Arr.length; j++) 
+          {
+    
+            lan_str=lan_str+`
+            
+            <div class="lan_item">
+                <span class="lan_item_lan">${project_specific_lan_Arr[j].lan_name} <span  class="lan_item_per">${project_specific_lan_Arr[j].lan_percentage}%</span></span>
+                <progress class="lan_item_pro" value='${project_specific_lan_Arr[j].lan_percentage}' max="100"></progress>
+            </div>
+            
+            `
+          }
+        }
+        if(project_specific_tag_Arr.length>0)
+        {
+          for (let k = 0; k < project_specific_tag_Arr.length; k++) 
+          {
+            if(k==0)
+            {
+              tag_str=tag_str+`
+              <div class="tag_container">
+              <p class="tag_head"> Tags:</p>
+              `
+            }
+            tag_str=tag_str+`
+            
+            <span class="tag_item">${project_specific_tag_Arr[k].tag_name}</span>
+            
+            `
+          }
+    
+          tag_str=tag_str+`
           </div>
-          <p class="item_p">${projectsArr[i].desc}</p>
-          ${lan_str}
-          ${tag_str}
-          <hr class="item_divider">
-     </div>
-     
-     `;
+          `
+        }
+        pro_str =
+          pro_str +
+          `
+          <div class="fetched_item section_container_css">
+            <input style="display: none;" value="${projectsArr[i].project_id}">
+            <div class="project_item_controls edit_btn">
+                <i class="fa-solid fa-pen  project_model_item_edit_handle"></i>
+                <i class="fa-solid fa-trash project_model_item_delete_handle" ></i>
+            </div>
+              <div class="item_detail_section">
+                  ${media_str}
+                  <div class="item_info">
+    
+                      <p class="item_heading">${projectsArr[i].title}</p>
+                      <h3 class="item_date">${dateSlice(
+                        projectsArr[i].start_date
+                      )} - ${dateSlice(projectsArr[i].end_date)}</h3>
+                  </div>
+              </div>
+              <p class="item_p">${projectsArr[i].description}</p>
+              ${lan_str}
+              ${tag_str}
+              <hr class="item_divider">
+        </div>
+        
+        `;
+      }
+    
+      pro_str=`
+      <div class="section_container_css">
+          <button class="filled_btn add_pro_btn" id="Add_project_btn">Add Project </button>
+          ${pro_str}
+      </div>
+      `
+      model_content_handle.innerHTML=pro_str
+      myModal.style.display="block"
+    
+      const items = document.getElementsByClassName('project_model_item_edit_handle');
+      for(let item of items){
+      item.addEventListener("click",(e)=>{
+        projectForm(item.parentNode.parentNode.children[0].getAttribute("value"))
+      })
+      }
+      const items2 = document.getElementsByClassName('project_model_item_delete_handle');
+      for(let item of items2){
+      item.addEventListener("click",(e)=>{
+        projectDeleteHandle(item.parentNode.parentNode.children[0].getAttribute("value"))
+        myModal.style.display="none"
+      })
+      }
+   }
+   else
+   {
+    pro_str=`
+      <div class="section_container_css">
+          <button class="filled_btn add_pro_btn" id="Add_project_btn">Add Project </button>
+          <p class="no_result_text">No project found</p>
+      </div>
+      `
+      model_content_handle.innerHTML=pro_str
+      myModal.style.display="block"
    }
 
-  pro_str=`
-  <div class="section_container_css">
-      <button class="filled_btn add_pro_btn" id="Add_project_btn">Add Project </button>
-      ${pro_str}
-  </div>
-  `
-   model_content_handle.innerHTML=pro_str
-   myModal.style.display="block"
-
-   const items = document.getElementsByClassName('project_model_item_edit_handle');
-  for(let item of items){
-  item.addEventListener("click",(e)=>{
-    projectForm(item.parentNode.parentNode.children[0].getAttribute("value"))
-  })
-  }
-   const items2 = document.getElementsByClassName('project_model_item_delete_handle');
-  for(let item of items2){
-  item.addEventListener("click",(e)=>{
-    projectDeleteHandle(item.parentNode.parentNode.children[0].getAttribute("value"))
-  })
-  }
 
   const Add_project_btn=document.getElementById("Add_project_btn")
   Add_project_btn.addEventListener("click",()=>{
@@ -1004,51 +1375,69 @@ project_handle.addEventListener("click",()=>{
 
 let education_handle=document.getElementById("education_handle")
 education_handle.addEventListener("click",()=>{
+
   let educationStr = "";
 
-  for (let i = 0; i < educationArr.length; i++) {
-    educationStr =
-      educationStr +
-      `
-            <div class="fetched_item section_container_css">
-              <input style="display: none;" value="${educationArr[i].educationId}">
-              <div class="item_controls edit_btn education_edits">
-                <i class="fa-solid fa-pen  education_model_item_edit_handle"></i>
-                <i class="fa-solid fa-trash education_model_item_delete_handle" ></i>
-              </div>
-              <p class="item_heading">${educationArr[i].instituteName}</p>
-              <p class="item_sub_heading">${educationArr[i].degree}</p>
-              <h3 class="item_date">${dateSlice(
-                educationArr[i].startDate
-              )} - ${dateSlice(educationArr[i].endDate)}</h3>
-              <p class="item_p">${educationArr[i].desc}</p>
-              <hr class="item_divider">
-            </div>
-            
-            `;
+  if(educationArr.length>0)
+  {
+
+      for (let i = 0; i < educationArr.length; i++) {
+        educationStr =
+          educationStr +
+          `
+                <div class="fetched_item section_container_css">
+                  <input style="display: none;" value="${educationArr[i].education_id}">
+                  <div class="item_controls edit_btn education_edits">
+                    <i class="fa-solid fa-pen  education_model_item_edit_handle"></i>
+                    <i class="fa-solid fa-trash education_model_item_delete_handle" ></i>
+                  </div>
+                  <p class="item_heading">${educationArr[i].institute_name}</p>
+                  <p class="item_sub_heading">${educationArr[i].degree}</p>
+                  <h3 class="item_date">${dateSlice(
+                    educationArr[i].start_date
+                  )} - ${dateSlice(educationArr[i].end_date)}</h3>
+                  <p class="item_p">${educationArr[i].description}</p>
+                  <hr class="item_divider">
+                </div>
+                
+                `;
+      }
+    
+      educationStr=`
+      <div class="section_container_css add_btn_container">
+        <button class="filled_btn add_btn" id="Add_education_btn">Add Experience </button>
+        ${educationStr}
+    </div>
+    `
+      model_content_handle.innerHTML=educationStr
+      myModal.style.display="block"
+    
+      const items = document.getElementsByClassName('education_model_item_edit_handle');
+    for(let item of items){
+    item.addEventListener("click",(e)=>{
+      educationForm(item.parentNode.parentNode.children[0].getAttribute("value"))
+    })
+    }
+      const items2 = document.getElementsByClassName('education_model_item_delete_handle');
+    for(let item of items2){
+    item.addEventListener("click",(e)=>{
+      educationDeleteHandle(item.parentNode.parentNode.children[0].getAttribute("value"))
+      myModal.style.display="none"
+    })
+    }
+  }
+  else
+  {
+    educationStr=`
+    <div class="section_container_css add_btn_container">
+      <button class="filled_btn add_btn" id="Add_education_btn">Add Experience </button>
+      <p class="no_result_text">No education found</p>
+  </div>
+  `
+    model_content_handle.innerHTML=educationStr
+    myModal.style.display="block"
   }
 
-  educationStr=`
-  <div class="section_container_css add_btn_container">
-     <button class="filled_btn add_btn" id="Add_education_btn">Add Experience </button>
-     ${educationStr}
- </div>
- `
-  model_content_handle.innerHTML=educationStr
-  myModal.style.display="block"
-
-  const items = document.getElementsByClassName('education_model_item_edit_handle');
- for(let item of items){
- item.addEventListener("click",(e)=>{
-  educationForm(item.parentNode.parentNode.children[0].getAttribute("value"))
- })
- }
-  const items2 = document.getElementsByClassName('education_model_item_delete_handle');
- for(let item of items2){
- item.addEventListener("click",(e)=>{
-  educationDeleteHandle(item.parentNode.parentNode.children[0].getAttribute("value"))
- })
- }
 
  const Add_education_btn=document.getElementById("Add_education_btn")
  Add_education_btn.addEventListener("click",()=>{
@@ -1063,9 +1452,8 @@ function educationForm(id){
 
 }
 
-function educationDeleteHandle(id){
-  const eduObj=new Education();
-  eduObj.deleteEducation(id)
+async function educationDeleteHandle(id){
+  await educationDelete(id)
 }
 
 let skills_handle=document.getElementById("skills_handle")
@@ -1083,6 +1471,19 @@ close_model_handle.addEventListener("click",()=>{
 })
 
 
+const convertBase64=async(file)=>{
+    const fileReader = new FileReader();
+
+    return new Promise(resolve=>{
+      fileReader.readAsDataURL(file);
+      fileReader.onload=(e)=>{
+        resolve(e.target.result);
+
+      }
+    })  
+}
+
+
 
 // show form to edit project
 function projectForm(id)
@@ -1094,7 +1495,7 @@ function projectForm(id)
 
     receivedId=parseInt(id)
     const clickedProject = projectsArr.filter((item) => {
-      return item.projectId === receivedId && item.userId === userId;
+      return item.project_id === receivedId;
     });
     str=`<form id="project_add_form">
   <div className=''>
@@ -1114,7 +1515,7 @@ function projectForm(id)
       type="text"
       id="project_desc"
       name="desc"
-      value='${clickedProject[0].desc}'
+      value='${clickedProject[0].description}'
       class='input_field'
       required
     />
@@ -1126,7 +1527,7 @@ function projectForm(id)
         id="project_s_date"
         name="startDate"
         class='input_field'
-        value=${clickedProject[0].startDate}
+        value=${clickedProject[0].start_date}
         required
       />
     </div>
@@ -1136,7 +1537,7 @@ function projectForm(id)
           type="date"
           id="project_e_date"
           name="endDate"
-          value=${clickedProject[0].endDate}
+          value=${clickedProject[0].end_date}
           class='input_field'
           required
         />
@@ -1158,7 +1559,7 @@ function projectForm(id)
               type="text"
               id="project_source_link"
               name="sourceLink"
-              value='${clickedProject[0].sourceLink}'
+              value='${clickedProject[0].source_link}'
               class='input_field'
               placeholder='Enter Project Code Link'
               required
@@ -1170,7 +1571,7 @@ function projectForm(id)
               type="text"
               id="project_live_link"
               name="liveLink"
-              value='${clickedProject[0].liveLink}'
+              value='${clickedProject[0].live_link}'
               class='input_field'
               placeholder='Enter Project Live Link'
             />
@@ -1423,47 +1824,84 @@ function projectForm(id)
   const tag_item_model=document.getElementsByClassName("tag_item_model")
 
 
-  project_add_form.addEventListener("submit",(e)=>{
+  project_add_form.addEventListener("submit",async(e)=>{
     e.preventDefault();
     const data = new FormData(e.target);
     const obj = Object.fromEntries(data);
     var fileExt = obj.file.name.split('.').pop();
+    // convert file into base64
+
+    const file_base64=await convertBase64(obj.file)
+
     const lang_arr= convertLangArr(lan_item_model)
     const tag_arr=convertTagArr(tag_item_model)
+
+
     console.log("lan arr")
     console.log(lang_arr)
     console.log("tag arr")
     console.log(tag_arr)
 
 
-    console.log(obj)
+    
     const updatedVersion={
-      userId:userId,
-      file: obj.file,
+      file: file_base64,
       exe: fileExt,
       title: obj.title,
-      startDate: obj.startDate,
-      endDate: obj.endDate,
-      desc: obj.desc,
-      sourceLink: obj.sourceLink,
-      liveLink: obj.liveLink,
-      languages:lang_arr,
-      tags:tag_arr
+      start_date: obj.startDate,
+      end_date: obj.endDate,
+      description: obj.desc,
+      source_link: obj.sourceLink,
+      live_link: obj.liveLink,
     }
+    console.log(obj)
+
+    console.log(updatedVersion)
 
 
-    let pObj=new Project();
+
     if(receivedId)
     {
-      pObj.updateProject(userId,receivedId,updatedVersion);
+      console.log("inside update")
+      await projectUpdate(updatedVersion,receivedId)
+     
+      // first delete all tags and languages specific to project 
+
+      await projectlanguageDelete(receivedId)
+      await projecttagDelete(receivedId)
+
+      // add updated onces
+      for (const item of lang_arr) {
+        await projectlanguageAdd(item,receivedId)
+      }
+
+      for (const item2 of tag_arr) {
+        await projecttagAdd(item2,receivedId)
+      }
       
     }
     else
     {
-      pObj.addProject(updatedVersion);
+      console.log("inside add")
+      const lastId=await projectAdd(updatedVersion);
+      // After adding project get new project id
+      console.log("lastId:"+lastId)
+      // add languages in DB and update arr
+      for (const item of lang_arr) {
+        await projectlanguageAdd(item,lastId)
+      }
+
+      // add tags in DB and update arr
+      for (const item2 of tag_arr) {
+        await projecttagAdd(item2,lastId)
+      }
+
+
     }
+    projectHandle(projectsArr)
     
     myModal.style.display = "none";
+    
 
   })
 }
@@ -1477,8 +1915,8 @@ function convertLangArr(ele)
     console.log(item)
     console.log(item.childNodes[2])
     let obj={
-      lanName:item.childNodes[1].innerText,
-      lanPer:parseInt(item.childNodes[3].innerText)
+      lan_name:item.childNodes[1].innerText,
+      lan_percentage:parseInt(item.childNodes[3].innerText)
     }
     lanArr.push(obj)
   }
@@ -1492,7 +1930,7 @@ function convertTagArr(ele)
   let tagArr=[];
   for (const item of ele) {
     let obj={
-      tagName:item.childNodes[1].innerText,
+      tag_name:item.childNodes[1].innerText,
     }
     tagArr.push(obj)
   }
@@ -1504,7 +1942,8 @@ function convertTagArr(ele)
 function getLanguagesStr(currProject)
 {
   let str='';
-  for (let i = 0; i < currProject.languages.length; i++) {
+  const lanArr=getProjectLanguages(currProject.project_id)
+  for (let i = 0; i < lanArr.length; i++) {
     if(i==0)
     {
       str=str+`
@@ -1513,8 +1952,8 @@ function getLanguagesStr(currProject)
     }
     str=str+`
     <div class="lan_item_model model_item_con">
-      <span class="lan_name_model item_model">${currProject.languages[i].lanName}</span>
-      <span class="lan_per_model item_model">${currProject.languages[i].lanPer}</span>
+      <span class="lan_name_model item_model">${lanArr[i].lan_name}</span>
+      <span class="lan_per_model item_model">${lanArr[i].lan_percentage}</span>
       <i class="fa-solid fa-xmark delete_lan_icon  icon_model" ></i>
     </div>
     
@@ -1526,7 +1965,8 @@ function getLanguagesStr(currProject)
 function getTagsStr(currProject)
 {
   let str="";
-  for (let i = 0; i < currProject.tags.length; i++) {
+  const tagArr=getProjectTag(currProject.project_id)
+  for (let i = 0; i < tagArr.length; i++) {
     if(i==0)
     {
       str=str+`
@@ -1535,7 +1975,7 @@ function getTagsStr(currProject)
     }
     str=str+`
     <div class="tag_item_model model_item_con">
-      <span class="tag_name_model item_model">${currProject.tags[i].tagName}</span>
+      <span class="tag_name_model item_model">${tagArr[i].tag_name}</span>
       <i class="fa-solid fa-xmark delete_tag_icon icon_model " ></i>
     </div>
     
@@ -1545,10 +1985,8 @@ function getTagsStr(currProject)
   return str;
 }
 
-function projectDeleteHandle(id){
-  console.log("Delete id:"+id)
-  const pObj=new Project();
-  pObj.deleteProject(id)
+async function projectDeleteHandle(id){
+  await projectDelete(id)
 }
 
 // Project search handling-----------
@@ -1558,6 +1996,34 @@ let search_project_keyword_input=document.getElementById("search_project_keyword
 let projectKeyword=document.getElementById("projectKeyword");
 let searchedProjectArr=[]
 
+
+function getProjectsFromTag(tagArr){
+
+
+  return projectsArr.filter((item)=>{
+    for (let i = 0; i < tagArr.length; i++) {
+     if(tagArr[i].project_id===item.project_id)
+       { 
+        return item;
+      }
+      
+    }
+  })
+
+}
+function getProjectsFromLan(lanArr){
+  
+  return projectsArr.filter((item)=>{
+    for (let i = 0; i < lanArr.length; i++) {
+     if(lanArr[i].project_id===item.project_id)
+       { 
+        return item;
+      }
+      
+    }
+  })
+
+}
 project_search_form.addEventListener("submit",(e)=>{
 
   e.preventDefault()
@@ -1574,17 +2040,20 @@ project_search_form.addEventListener("submit",(e)=>{
   }else if(select_val==="all")
   {
     searchedProjectArr = projectsArr.filter((item) => {
-      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
+      const tArr=getProjectTag(item.project_id);
+      const lArr=getProjectLanguages(item.project_id);
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(lArr,input_val).length>0  || checkInTag(tArr,input_val).length>0 
     });
     console.log(searchedProjectArr)
   }else if(select_val==="lanName")
   {
-    searchedProjectArr =checkInLan(projectsArr,input_val)
+    searchedProjectArr =checkInLan(project_languageArr,input_val)
   }
   else if(select_val==="tagName")
   {
-    searchedProjectArr = checkInTag(projectsArr,input_val)
+    searchedProjectArr = checkInTag(project_tagArr,input_val)
   }
+  
   projectHandle(searchedProjectArr)
 
 })
@@ -1604,17 +2073,20 @@ search_project_keyword_input.onchange=function(){
   }else if(select_val==="all")
   {
     searchedProjectArr = projectsArr.filter((item) => {
-      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
+      const tArr=getProjectTag(item.project_id);
+      const lArr=getProjectLanguages(item.project_id);
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(lArr,input_val).length>0  || checkInTag(tArr,input_val).length>0 
     });
     console.log(searchedProjectArr)
   }else if(select_val==="lanName")
   {
-    searchedProjectArr =checkInLan(projectsArr,input_val)
+    searchedProjectArr =checkInLan(project_languageArr,input_val)
   }
   else if(select_val==="tagName")
   {
-    searchedProjectArr = checkInTag(projectsArr,input_val)
+    searchedProjectArr = checkInTag(project_tagArr,input_val)
   }
+  
   projectHandle(searchedProjectArr)
  
 }
@@ -1632,37 +2104,39 @@ projectKeyword.onchange=function(){
   }else if(select_val==="all")
   {
     searchedProjectArr = projectsArr.filter((item) => {
-      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
+      const tArr=getProjectTag(item.project_id);
+      const lArr=getProjectLanguages(item.project_id);
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(lArr,input_val).length>0  || checkInTag(tArr,input_val).length>0 
     });
     console.log(searchedProjectArr)
   }else if(select_val==="lanName")
   {
-    searchedProjectArr =checkInLan(projectsArr,input_val)
+    searchedProjectArr =checkInLan(project_languageArr,input_val)
   }
   else if(select_val==="tagName")
   {
-    searchedProjectArr = checkInTag(projectsArr,input_val)
+    searchedProjectArr = checkInTag(project_tagArr,input_val)
   }
+  
   projectHandle(searchedProjectArr)
 }
 
 function checkInDesc(projectsArr,input_val){
   return   projectsArr.filter((item) => {
-    return item.desc.toLowerCase().includes(input_val.toLowerCase());
+    return item.description.toLowerCase().includes(input_val.toLowerCase());
   });
 }
-function checkInTag(projectsArr,input_val){
-  return projectsArr.filter((item) => {
-    for (let i = 0; i < item.tags.length; i++) {
-      if(item.tags[i].tagName.toLowerCase().includes(input_val.toLowerCase()))
-        {
-          console.log(item)
-          return item;
-        }
+function checkInTag(ptArr,input_val){
+  const tArr= ptArr.filter((item) => {
+    if(item.tag_name.toLowerCase().includes(input_val.toLowerCase()))
+      {
+        console.log(item)
+        return item;
+      }
+
       
-    }
-    
-  });
+    });
+    return getProjectsFromTag(tArr)
 }
 function checkInTitle(projectsArr,input_val){
  const searchedProjectArr = projectsArr.filter((item) => {
@@ -1670,18 +2144,16 @@ function checkInTitle(projectsArr,input_val){
   });
   return searchedProjectArr;
 }
-function checkInLan(projectsArr,input_val){
-  return projectsArr.filter((item) => {
-    for (let i = 0; i < item.languages.length; i++) {
-      if(item.languages[i].lanName.toLowerCase().includes(input_val.toLowerCase()))
-        {
-          console.log(item)
-          return item;
-        }
-      
-    }
-    
-  });
+function checkInLan(plArr,input_val){
+  const pLan=plArr.filter((item) => {
+    if(item.lan_name.toLowerCase().includes(input_val.toLowerCase()))
+      {
+        console.log(item)
+        return item;
+      }
+});
+
+return getProjectsFromLan(pLan)
 }
 
 
@@ -1774,12 +2246,12 @@ experienceKeyword.onchange=function(){
 
 function checkInExperienceDesc(expArr,input_val){
   return expArr.filter((item) => {
-    return item.desc.toLowerCase().includes(input_val.toLowerCase());
+    return item.description.toLowerCase().includes(input_val.toLowerCase());
   });
 }
 function checkInCompanyName(expArr,input_val){
   return expArr.filter((item) => {
-    return item.companyName.toLowerCase().includes(input_val.toLowerCase());
+    return item.company_name.toLowerCase().includes(input_val.toLowerCase());
   });
 }
 function checkInCompanyRole(expArr,input_val){
@@ -1877,7 +2349,7 @@ educationKeyword.onchange=function(){
 
 function checkIninstituteName(eduArr,input_val){
   return eduArr.filter((item) => {
-    return item.instituteName.toLowerCase().includes(input_val.toLowerCase());
+    return item.institute_name.toLowerCase().includes(input_val.toLowerCase());
   });
 }
 function checkInDegree(eduArr,input_val){

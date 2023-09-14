@@ -1,4 +1,5 @@
-import projectData from "../Api/Projects.json" assert { type: "json" };
+import url from "../../utils/config.json" assert { type: "json" };
+
 export class Project {
   // initialize values in constructor
   constructor() {
@@ -17,109 +18,177 @@ export class Project {
   }
   // Perform CRUD
 
-  addProject(project) {
+  addProject=async(token,project) =>{
     // read JSON file and append new Project
-
-    // get data from .json
-    const ProjectArr = this.getProjects();
-    const size = ProjectArr.length;
-    // add id
-    project.projectId = size + 1;
-    // push to the fetched array
-    ProjectArr.push(project);
-    // download the file
-    this.#download(ProjectArr);
-  }
-  updateProject(userid, id, upProject) {
-    // search particular Project id then update data then save json
-
-    // get data from .json
-    const ProjectArr = this.getProjects();
-
-    // search for specific index, one having userId=userid and projectId=id
-    console.log(ProjectArr);
-    let ProjectIn = -1;
-
-    for (let i = 0; i < ProjectArr.length; i++) {
-      if (ProjectArr[i].projectId === id && ProjectArr[i].userId === userid) {
-        ProjectIn = i;
-        break;
-      }
-    }
-    console.log("index:" + ProjectIn);
-
-    console.log("Updated version--------")
-    console.log(upProject)
-    // update object
-    const updatedVersion = {
-      projectId: id,
-      userId: userid,
-      file: upProject.file,
-      exe: upProject.exe,
-      title: upProject.title,
-      startDate: upProject.startDate,
-      endDate: upProject.endDate,
-      desc: upProject.desc,
-      sourceLink: upProject.sourceLink,
-      liveLink: upProject.liveLink,
-      languages:upProject.languages,
-      tags:upProject.tags,
-
-    };
-    ProjectArr[ProjectIn] = updatedVersion;
-    console.log(ProjectArr);
-    // download the file
-    this.#download(ProjectArr);
-  }
-  deleteProject(id) {
-    // delete Project with particular id and then save
-    // getting array of objects
-    const ProjectArr = this.getProjects();
-
-    // filter array where projectId!=id
-
-    const filteredResult = ProjectArr.filter((curr) => {
-      return curr.projectId != id;
-    });
-
-    // download the file
-    this.#download(filteredResult);
-  }
-  getProjects() {
-    // get all Project
     try {
-      const data = projectData;
-      return data;
+      const res = await fetch(`${url.BASE_URL}/api/project`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "authorization":`Bearer ${token}`
+        },
+        body: JSON.stringify(project),
+      });
+
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(res.status))
+      {
+          // not found
+          return {
+            status:res.status,
+            message:result.message,
+          };
+      }
+      console.log("Inside project: result:")
+      console.log(result)
+      return{
+        status:res.status,
+        message:result.message,
+        lastid:result.result
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+  }
+  updateProject=async(token,ProjectId, upProject) =>{
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/project/${ProjectId}`, {
+        method: "PUT",
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
+          "authorization":`Bearer ${token}`
+        },
+        body: JSON.stringify(upProject),
+      });
+
+
+      const result = await res.json();
+
+      if([400,404,500,401].includes(res.status))
+      {
+          // not found
+          return {
+            status:res.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:res.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+   
+  }
+  deleteProject=async(token,id)=> {
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/project/${id}`, {
+        method: "DELETE", 
+        headers: {
+          "content-type":"application/json",
+          "authorization":`Bearer ${token}`
+        }
+      });
+      const result = await res.json();
+
+      if([400,404,500,401].includes(res.status))
+      {
+          // not found
+          return {
+            status:res.status,
+            message:result.message,
+          };
+      }
+     
+
+      return{
+        status:res.status,
+        message:result.message,
+      };
+    } catch (err) {
+      return {
+        status:500,
+        message:err,
+      };
+    }
+    
+  }
+  getProjects=async(token)=> {
+
+
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/project`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "authorization":`Bearer ${token}`
+          }
+      });
+      const result = await res.json();
+
+      if([400,404,500,401].includes(res.status))
+      {
+          // not found
+          return {
+            status:res.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
+
+      return result;
+      
+      
+      
     } catch (err) {
       console.log(err);
     }
+  
   }
-  getSingleProject(userid, id) {
-    // get single Project by id
+  getSingleProject=async(token,id)=> {
+    
 
-    // getting array of objects
-    const ProjectArr = this.getProjects();
+    try {
+      const res = await fetch(`${url.BASE_URL}/api/project/${id}`,{
+          method:"GET",
+          headers:{
+              "content-type":"application/json",
+              "authorization":`Bearer ${token}`
+          }
+      });
+      const result = await res.json();
 
-    // search for specific one having userId=userid and projectId=id
+      if([400,404,500,401].includes(res.status))
+      {
+          // not found
+          return {
+            status:res.status,
+            message:result.message,
+            result:""
+          };
+      }
+     
 
-    return ProjectArr.filter((curr) => {
-      return curr.projectId === id && curr.userId === userid;
-    })[0];
-  }
-  #download(arr) {
-    const fileName = "Project.json";
-    let jsonText = JSON.stringify(arr);
-    let ele = document.createElement("a");
-    ele.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(jsonText)
-    );
-
-    ele.setAttribute("download", fileName);
-    ele.style.display = "none";
-    document.body.appendChild(ele);
-    console.log(ele);
-    ele.click();
-    document.body.removeChild(ele);
+      return result;
+      
+      
+      
+    } catch (err) {
+      console.log(err);
+    }
+  
+  
   }
 }

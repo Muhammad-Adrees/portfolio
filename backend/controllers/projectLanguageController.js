@@ -19,9 +19,6 @@ const addProjectLanguage=async({ res,
         if(err)
         { 
             return serverErr(res,err)
-        } else if(result.affectedRows===0)
-        {
-            return notFound(res)
         }
         
         return successRes(res);
@@ -42,10 +39,6 @@ const getAllProjectLanguages=({ res,
         if(err)
         {
             return serverErr(res,err)
-        }
-        else if(result.length===0)
-        {
-            return notFound(res)
         }
         
         successResult(res,result)
@@ -111,9 +104,6 @@ const deleteAllProjectLanguages=({ res,
         if(err)
         {
             return serverErr(res,err)
-        }else if(result.length===0)
-        {
-            return notFound(res)
         }
        
         

@@ -23,6 +23,7 @@ const registerUser=async(res,obj,DBcon)=>{
 }
 
 const loginUser=(res,credentials,DBcon)=>{
+    console.log("Inside login db")
     // check for login
     const getQuery=
     `
@@ -35,6 +36,7 @@ const loginUser=(res,credentials,DBcon)=>{
         }
         else if(result.length===0)
         {
+            console.log("Not found login!!")
             return notFound(res);
         }
         // compare passwords in case of hashed passwords;
@@ -44,7 +46,7 @@ const loginUser=(res,credentials,DBcon)=>{
         {
             // now generate jwt token and send with res
 
-            const token=generateAuthToken(result[0].user_id);
+            const token=generateAuthToken(result[0].user_id,result[0].user_role);
 
             const data={token,user_role:result[0].user_role};
             result[0].auth_token=token;
