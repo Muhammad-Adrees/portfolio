@@ -59,7 +59,7 @@ cd backend
 
 Make sure the information sending with api's is correct
 
-You can logged in using the username and password, and use it to add your own content!!!
+You can logged in using the username and password, and use it to add your own content. As an admin you can edit all the active users and live projects. So for user the ui is different as compare to admin.
 
 ## Troubleshooting
 
