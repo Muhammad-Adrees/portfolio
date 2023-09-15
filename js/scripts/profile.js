@@ -529,9 +529,10 @@ const educationUpdate=async(upObj,id)=>{
   educationArr= await educationObj.getEducations(auth_token);
   // update dom
   educationHandle(educationArr);
+  infoHandle()
 
 }
-const educationDelete=async(id)=>{
+const educationDelete=async(id)=>{ 
   const educationObj=new Education();
     // update 
   await educationObj.deleteEducation(auth_token,id);
@@ -539,6 +540,7 @@ const educationDelete=async(id)=>{
   educationArr= await educationObj.getEducations(auth_token);
   // update dom
   educationHandle(educationArr);
+  infoHandle()
 
 }
 const educationAdd=async(obj)=>{
@@ -549,6 +551,7 @@ const educationAdd=async(obj)=>{
   educationArr= await educationObj.getEducations(auth_token);
   // update dom
   educationHandle(educationArr);
+  infoHandle()
 
 }
 // contact
@@ -636,6 +639,34 @@ const userinfoAdd=async(upObj)=>{
   infoHandle();
 }
 // skill
+
+const skillAdd=async(upObj)=>{
+  const skillObj=new Skill();
+  // update 
+  await skillObj.addSkill(auth_token,upObj);
+  // get updated 
+  skillsArr= await skillObj.getSkills(auth_token);
+  // update dom
+  skillsHandle();
+}
+const skillDelete=async(id)=>{
+  const skillObj=new Skill();
+  // update 
+  await skillObj.deleteSkill(auth_token,id);
+  // get updated 
+  skillsArr= await skillObj.getSkills(auth_token);
+  // update dom
+  skillsHandle();
+}
+const skillUpdate=async(upObj,id)=>{
+  const skillObj=new Skill();
+  // update 
+  await skillObj.updateSkill(auth_token,id,upObj);
+  // get updated 
+  skillsArr= await skillObj.getSkills(auth_token);
+  // update dom
+  skillsHandle();
+}
 // project_language
 
 const projectlanguageAdd=async(adObj,pid)=>{
@@ -1449,7 +1480,207 @@ education_handle.addEventListener("click",()=>{
 
 
 function educationForm(id){
+  let str='';
+  let receivedId=undefined;
+  if(id)
+  {
 
+    receivedId=parseInt(id)
+    const clickedProject = educationArr.filter((item) => {
+      return item.education_id === receivedId;
+    });
+    str=` <form id="education_add_form">
+    <div className=''>
+    <label for="institute_name" class="label_input">Enter Institute Name</label>
+    <input
+        type="text"
+        id="institute_name"
+        name="institute_name"
+        value='${clickedProject[0].institute_name}'
+        class='input_field'
+        required
+      />
+    </div>
+    <div className=''>
+    <label for="degree" class="label_input">Enter Degree</label>
+      <input
+        type="text"
+        id="degree"
+        name="degree"
+        class='input_field'
+        value='${clickedProject[0].degree}'
+        required
+      />
+    </div>
+    <div className=''>
+    <label for="location" class="label_input">Enter Location</label>
+      <input
+        type="text"
+        id="location"
+        name="location"
+        class='input_field'
+        value='${clickedProject[0].location}'
+        required
+      />
+    </div>
+    <div className=''>
+    <label for="education_s_date" class="label_input">Add Start Date</label>
+        <input
+          type="date"
+          id="education_s_date"
+          name="startDate"
+          value='${clickedProject[0].start_date}'
+          class='input_field'
+          required
+        />
+      </div>
+        <div className=''>
+        <label for="education_e_date" class="label_input">Add End Date</label>
+            <input
+            type="date"
+            id="education_e_date"
+            name="endDate"
+            value='${clickedProject[0].end_date}'
+            class='input_field'
+            required
+          />
+        </div>
+        <div className=''>
+        <label for="description" class="label_input">Enter Description</label>
+                <input
+                type="text"
+                id="description"
+                name="description"
+                value='${clickedProject[0].description}'
+                class='input_field'
+                required
+              />
+        </div>
+
+      
+        <button type="submit" class='education_submit filled_btn' id="education_submit_btn">Edit Education</button>
+</form>
+`
+  }
+  else
+  {
+    str=` <form id="education_add_form">
+    <div className=''>
+    <label for="institute_name" class="label_input">Enter Institute Name</label>
+    <input
+        type="text"
+        id="institute_name"
+        name="institute_name"
+        class='input_field'
+        required
+      />
+    </div>
+    <div className=''>
+    <label for="degree" class="label_input">Enter Degree</label>
+      <input
+        type="text"
+        id="degree"
+        name="degree"
+        class='input_field'
+        required
+      />
+    </div>
+    <div className=''>
+    <label for="location" class="label_input">Enter Location</label>
+      <input
+        type="text"
+        id="location"
+        name="location"
+        class='input_field'
+        required
+      />
+    </div>
+    <div className=''>
+    <label for="education_s_date" class="label_input">Add Start Date</label>
+        <input
+          type="date"
+          id="education_s_date"
+          name="startDate"
+          class='input_field'
+          required
+        />
+      </div>
+        <div className=''>
+        <label for="education_e_date" class="label_input">Add End Date</label>
+            <input
+            type="date"
+            id="education_e_date"
+            name="endDate"
+            class='input_field'
+            required
+          />
+        </div>
+        <div className=''>
+        <label for="description" class="label_input">Enter Description</label>
+                <input
+                type="text"
+                id="description"
+                name="description"
+                class='input_field'
+                required
+              />
+        </div>
+
+      
+        <button type="submit" class='education_submit filled_btn' id="education_submit_btn">Add Education</button>
+</form>
+`
+  }
+
+  model_content_handle.innerHTML=str;
+  myModal.style.display="block";
+
+
+  let education_add_form=document.getElementById("education_add_form")
+
+  education_add_form.addEventListener("submit",async(e)=>{
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const obj = Object.fromEntries(data);
+
+    let sDate=new Date(obj.startDate)
+    let eDate=new Date(obj.endDate)
+
+    let year=eDate.getFullYear()-sDate.getFullYear();
+
+    if(year<0)
+    {
+      alert("Enter valid end date")
+      education_add_form.reset();
+      return;
+    }
+
+    const updatedVersion={
+      institute_name: obj.institute_name,
+      degree: obj.degree,
+      location: obj.location,
+      start_date: obj.startDate,
+      end_date: obj.endDate,
+      description: obj.description,
+    }
+
+    
+
+    // let expObj=new Experience();
+    if(id)
+    {
+      
+      await educationUpdate(updatedVersion,receivedId);
+    }
+    else
+    {
+      await educationAdd(updatedVersion)   
+     
+    }
+    
+    myModal.style.display = "none";
+
+  })
 }
 
 async function educationDeleteHandle(id){
@@ -1459,10 +1690,240 @@ async function educationDeleteHandle(id){
 let skills_handle=document.getElementById("skills_handle")
 skills_handle.addEventListener("click",()=>{
    // handle skills section edit model
-   console.log("skills edit clicked")
+  
+   let skillStr = "";
+
+   if(skillsArr.length>0)
+   {
+ 
+       for (let i = 0; i < skillsArr.length; i++) {
+        skillStr =
+        skillStr +
+           `
+                 <div class="fetched_item section_container_css">
+                   <input style="display: none;" value="${skillsArr[i].skill_id}">
+                   <div class="item_controls edit_btn skill_edits">
+                     <i class="fa-solid fa-pen  skill_model_item_edit_handle"></i>
+                     <i class="fa-solid fa-trash skill_model_item_delete_handle" ></i>
+                   </div>
+                   <div class="fetched_item">
+                   <p class="item_heading">${skillsArr[i].skill_name}</p>
+                   <h3 class="item_date">${dateSlice(
+                     skillsArr[i].start_date
+                   )} - ${dateSlice(skillsArr[i].end_date)}</h3>
+                   <hr class="item_divider">
+                   </div>
+                 </div>
+                 
+                 `;
+       }
+     
+       skillStr=`
+       <div class="section_container_css add_btn_container">
+         <button class="filled_btn add_btn" id="Add_skill_btn">Add Skill </button>
+         ${skillStr}
+     </div>
+     `
+       model_content_handle.innerHTML=skillStr
+       myModal.style.display="block"
+     
+       const items = document.getElementsByClassName('skill_model_item_edit_handle');
+     for(let item of items){
+     item.addEventListener("click",(e)=>{
+       skillForm(item.parentNode.parentNode.children[0].getAttribute("value"))
+     })
+     }
+       const items2 = document.getElementsByClassName('skill_model_item_delete_handle');
+     for(let item of items2){
+     item.addEventListener("click",(e)=>{
+       skillDeleteHandle(item.parentNode.parentNode.children[0].getAttribute("value"))
+       myModal.style.display="none"
+     })
+     }
+   }
+   else
+   {
+    skillStr=`
+     <div class="section_container_css add_btn_container">
+       <button class="filled_btn add_btn" id="Add_skill_btn">Add Skill </button>
+       <p class="no_result_text">No skill found</p>
+   </div>
+   `
+     model_content_handle.innerHTML=skillStr
+     myModal.style.display="block"
+   }
+ 
+ 
+  const Add_skill_btn=document.getElementById("Add_skill_btn")
+  Add_skill_btn.addEventListener("click",()=>{
+   skillForm(undefined)
+  })
 
 })
 
+
+function skillForm(id){
+  let str='';
+  let receivedId=undefined;
+  if(id)
+  {
+
+    receivedId=parseInt(id)
+    const clickedProject = skillsArr.filter((item) => {
+      return item.skill_id === receivedId;
+    });
+    str=` <form id="skill_add_form">
+    <div className=''>
+    <label for="skill_name" class="label_input">Enter Skill Name</label>
+    <input
+        type="text"
+        id="skill_name"
+        name="skill_name"
+        value='${clickedProject[0].skill_name}'
+        class='input_field'
+        required
+      />
+    </div>
+    <div className=''>
+    <label for="skill_s_date" class="label_input">Add Start Date</label>
+        <input
+          type="date"
+          id="skill_s_date"
+          name="startDate"
+          value='${clickedProject[0].start_date}'
+          class='input_field'
+          required
+        />
+      </div>
+        <div className=''>
+        <label for="skill_e_date" class="label_input">Add End Date</label>
+            <input
+            type="date"
+            id="skill_e_date"
+            name="endDate"
+            value='${clickedProject[0].end_date}'
+            class='input_field'
+            required
+          />
+        </div>
+        <div className=''>
+        <label for="experience_per" class="label_input">Enter Experience in %</label>
+                <input
+                type="number"
+                id="experience_per"
+                name="experience_per"
+                value='${clickedProject[0].experience_per}'
+                class='input_field'
+                required
+              />
+        </div>
+
+      
+        <button type="submit" class='skill_submit filled_btn' id="skill_submit_btn">Edit Skill</button>
+</form>
+`
+  }
+  else
+  {
+    str=` <form id="skill_add_form">
+    <div className=''>
+    <label for="skill_name" class="label_input">Enter Skill Name</label>
+    <input
+        type="text"
+        id="skill_name"
+        name="skill_name"
+        class='input_field'
+        required
+      />
+    </div>
+    <div className=''>
+    <label for="skill_s_date" class="label_input">Add Start Date</label>
+        <input
+          type="date"
+          id="skill_s_date"
+          name="startDate"
+          class='input_field'
+          required
+        />
+      </div>
+        <div className=''>
+        <label for="skill_e_date" class="label_input">Add End Date</label>
+            <input
+            type="date"
+            id="skill_e_date"
+            name="endDate"
+            class='input_field'
+            required
+          />
+        </div>
+        <div className=''>
+        <label for="experience_per" class="label_input">Enter Experience in %</label>
+                <input
+                type="number"
+                id="experience_per"
+                name="experience_per"
+                class='input_field'
+                required
+              />
+        </div>
+
+      
+        <button type="submit" class='skill_submit filled_btn' id="skill_submit_btn">Add Skill</button>
+</form>
+`
+  }
+
+  model_content_handle.innerHTML=str;
+  myModal.style.display="block";
+
+
+  let skill_add_form=document.getElementById("skill_add_form")
+
+  skill_add_form.addEventListener("submit",async(e)=>{
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const obj = Object.fromEntries(data);
+
+    let sDate=new Date(obj.startDate)
+    let eDate=new Date(obj.endDate)
+
+    let year=eDate.getFullYear()-sDate.getFullYear();
+
+    if(year<0)
+    {
+      alert("Enter valid end date")
+      skill_add_form.reset();
+      return;
+    }
+
+    const updatedVersion={
+      skill_name: obj.skill_name,
+      start_date: obj.startDate,
+      end_date: obj.endDate,
+      experience_per: obj.experience_per,
+    }
+
+    
+
+    // let expObj=new Experience();
+    if(id)
+    {
+      
+      await skillUpdate(updatedVersion,receivedId);
+    }
+    else
+    {
+      await skillAdd(updatedVersion)   
+     
+    }
+    
+    myModal.style.display = "none";
+
+  })
+}
+async function skillDeleteHandle(id){
+  await skillDelete(id)
+}
 
 let close_model_handle=document.getElementById("close_model_handle")
 

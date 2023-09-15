@@ -39,7 +39,7 @@ module.exports = async ({ req, res, completeUrl, DBcon,verifiedUser }) => {
           // update with id
           const body = await bodyParser(req);
           // validate body and user
-          if (!Isvalidbody(body) || !validateUser(body)) {
+          if (!IsvalidbodyUpdate(body) || !validateUserUpdate(body)) {
                return inValidStatus(res);
           }
           updateUser(res, id, body, DBcon);
@@ -63,6 +63,11 @@ module.exports = async ({ req, res, completeUrl, DBcon,verifiedUser }) => {
 const validateUser = (obj) => {
      const checkRole = obj.user_role === 'admin' || obj.user_role === 'user';
      return validator.isEmail(obj.email) && obj.password.length >= 9 && checkRole;
+}
+
+const validateUserUpdate = (obj) => {
+     const checkRole = obj.user_role === 'admin' || obj.user_role === 'user';
+     return validator.isEmail(obj.email) && checkRole;
 }
 const notFoundStatus=(res)=>{
     
@@ -88,17 +93,32 @@ const inValidStatus = (res) => {
 
 // check input body
 const Isvalidbody = (body) => {
-     const { first_name, last_name, email, password, user_role, auth_token } = body;
+const { first_name, last_name, email, password, user_role } = body;
      // check validate input 
 
      const check = [null, undefined].includes(first_name) ||
           [null, undefined].includes(last_name) ||
           [null, undefined].includes(email) ||
           [null, undefined].includes(password) ||
-          [null, undefined].includes(user_role) ||
-          [null, undefined].includes(auth_token);;
+          [null, undefined].includes(user_role) 
 
-     const length = Object.keys(body).length === 6;
+     const length = Object.keys(body).length === 5;
+
+     if (check || !length) {
+          return false;
+     }
+     return true;
+}
+const IsvalidbodyUpdate = (body) => {
+     const { first_name, last_name, email, user_role} = body;
+     // check validate input 
+
+     const check = [null, undefined].includes(first_name) ||
+          [null, undefined].includes(last_name) ||
+          [null, undefined].includes(email) ||
+          [null, undefined].includes(user_role) 
+
+     const length = Object.keys(body).length === 4;
 
      if (check || !length) {
           return false;

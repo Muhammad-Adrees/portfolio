@@ -29,6 +29,7 @@
                     <input type="text" id="search_user_keyword_input" class="input_field_search"
                         placeholder="Enter keyword" />
                     <select name="userKeyword" id="userKeyword" class="input_field_search">
+                        <option value="all">All</option>
                         <option value="firstName">First Name</option>
                         <option value="lastName">Last Name</option>
                         <option value="email">Email</option>
@@ -67,8 +68,6 @@
                             <option value="all">All</option>
                             <option value="title">Title</option>
                             <option value="desc">Description</option>
-                            <option value="lanName">Languages</option>
-                            <option value="tagName">Tags</option>
                         </select>
                         <button type="submit" class="search_submit">Submit</button>
                     </form>
@@ -96,7 +95,7 @@
 
         </div>
     </section>
-    <script src="../../../js/scripts/admin.js" type="module"></script>
+    <script defer="true" src="../../../js/scripts/admin.js" type="module"></script>
     <script src="https://kit.fontawesome.com/6661f72848.js" crossorigin="anonymous"></script>
 </body>
 

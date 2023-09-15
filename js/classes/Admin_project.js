@@ -77,7 +77,7 @@ export class Admin_project {
 
 
     try {
-      const res = await fetch(`${url.BASE_URL}/api/about`,{
+      const res = await fetch(`${url.BASE_URL}/api/adminproject`,{
           method:"GET",
           headers:{
               "Content-Type":"application/json",

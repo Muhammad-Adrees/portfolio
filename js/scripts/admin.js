@@ -1,48 +1,108 @@
-import dataReceieved from "../fetchData.js";
-import { User_registration } from "./classes/User_registration.js";
-import { Admin_project } from "./classes/Admin_project.js";
+import adminfetchDate from "../adminfetchData.js";
+import { User_registration } from "../classes/User_registration.js";
+import { Admin_project } from "../classes/Admin_project.js";
   
-let projectsArr = dataReceieved.projectsArr;
-let currArr = [];
-let activeUsersArr = dataReceieved.usersArr;
+let projectsArr, activeUsersArr,current_userArr 
 
-let userId = 0;
+const initialize=()=>{
+  projectsArr = adminfetchDate.dataReceieved.projectsArr;
+  activeUsersArr = adminfetchDate.dataReceieved.usersArr;
+  current_userArr=adminfetchDate.dataReceieved.current_userArr;
+}
 let auth_token="";
 let userRole = "";
+
+
 let model_content_handle = document.getElementById("model_content_handle");
 let myModal = document.getElementById("myModal");
 
-window.onload = function () {
-  document.getElementById("loading").style.display="none"
 
-  auth_token = parseInt(localStorage.getItem("auth_token"));
-  userRole = localStorage.getItem("userRole");
-  if (!userRole) {
-    location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
+auth_token = localStorage.getItem("auth_token");
+userRole = localStorage.getItem("userRole");
+if (!userRole) {
+  location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
+}
+  if (userRole === "user") {
+    location.href = "http://127.0.0.1:5501/index.html";
   }
-    if (userRole === "user") {
-      location.href = "http://127.0.0.1:5501/index.html";
-    }
 
-  // userSpecificData();
-  modifyDOM();
+window.onload = async function () {
+  document.getElementById("loading").style.display="none"
+    await adminfetchDate.run();
+    initialize()
+    modifyDOM();
 };
 
-// function userSpecificData() {
-//   // specific user data
-//   currArr = dataReceieved.User_registration.filter((item) => {
-//     return item.userId === userId;
-//   });
-// }
 function modifyDOM() {
   navHandle();
   userHandle(activeUsersArr);
   projectHandle(projectsArr);
 }
 
+// user handle
+const userAdd=async(upUser)=>{
+  // add user
+
+  const user_obj=new User_registration();
+
+  // add new user
+  await user_obj.addUser(auth_token,upUser);
+
+  // get users
+  activeUsersArr=await user_obj.getUsers(auth_token)
+
+  // update dom
+  userHandle(activeUsersArr);
+
+}
+const userUpdate=async(upUser,userid)=>{
+   // add user
+
+   const user_obj=new User_registration();
+
+   // add new user
+   await user_obj.updateUser(auth_token,userid,upUser);
+ 
+   // get users
+   activeUsersArr=await user_obj.getUsers(auth_token)
+ 
+   // update dom
+   userHandle(activeUsersArr);
+
+}
+const userDelete=async(userid)=>{
+  // add user
+
+  const user_obj=new User_registration();
+
+  // add new user
+  await user_obj.deleteSingleUser(auth_token,userid);
+
+  // get users
+  activeUsersArr=await user_obj.getUsers(auth_token)
+
+  // update dom
+  userHandle(activeUsersArr);
+
+}
+
+// project handle
+
+const deleteProject=async(pId)=>{
+  const project_obj=new Admin_project();
+
+  await project_obj.deleteAdminProject(auth_token,pId);
+
+  projectsArr=await project_obj.getAdminProjects(auth_token);
+
+  projectHandle(projectsArr)
+
+}
+
+
 function navHandle() {
   let user_name = document.getElementById("user_name");
-  const name = currArr[0].last_name;
+  const name = current_userArr[0].last_name;
   let str = `<a href="/src/pages/Admin/Admin.html" class="logo_link">${name}</a>`;
   user_name.innerHTML = str;
 }
@@ -51,48 +111,68 @@ function userHandle(users) {
   let admin_project_items = document.getElementById("admin_project_items");
   let user_str = "";
 
-  for (let i = 0; i < users.length; i++) {
-    user_str =
-      user_str +
-      `
-    <div class="user_fetched_item">
-    <input style="display: none;" value="${users[i].user_id}">
-      <div class="user_item_info">
-          <span class="item_info">${users[i].first_name}</span>
-          <span class="item_info">${users[i].last_name}</span>
-          <span class="item_info">${users[i].email}</span>
-          <span class="item_info">${users[i].user_role}</span>
-      </div>
-      <div class="user_btn_container">
-          <button class="btn_border user_delete">Delete User</button>
-          <button class="filled_btn user_update">Update User</button>
-      </div>
-    </div>
+  if(users.length>0)
+  {
     
-    `;
-  }
 
-  user_str=`
-  ${user_str}
-  <div class="section_container_css add_user">
-      <button class="filled_btn add_pro_btn" id="Add_user_btn">Add User </button>
+    
+    for (let i = 0; i < users.length; i++) {
+      user_str =
+        user_str +
+        `
+      <div class="user_fetched_item">
+      <input style="display: none;" value="${users[i].user_id}">
+        <div class="user_item_info">
+            <span class="item_info">${users[i].first_name}</span>
+            <span class="item_info">${users[i].last_name}</span>
+            <span class="item_info">${users[i].email}</span>
+            <span class="item_info">${users[i].user_role}</span>
+        </div>
+        <div class="user_btn_container">
+            <button class="btn_border user_delete">Delete User</button>
+            <button class="filled_btn user_update">Update User</button>
+        </div>
+      </div>
       
-  </div>
+      `;
+    }
+  
+    user_str=`
+    ${user_str}
+    <div class="section_container_css add_user">
+        <button class="filled_btn add_pro_btn" id="Add_user_btn">Add User </button>
+        
+    </div>
+  
+    `
+    admin_project_items.innerHTML = user_str;
+    const user_delete = document.getElementsByClassName('user_delete');
+    for(let item of user_delete){
+    item.addEventListener("click",(e)=>{
+      deleteClickedUser(item.parentNode.parentNode.children[0].getAttribute("value"))
+    })
+    }
+    const user_update = document.getElementsByClassName('user_update');
+    for(let item of user_update){
+    item.addEventListener("click",(e)=>{
+      updateForm(item.parentNode.parentNode.children[0].getAttribute("value"))
+    })
+    }
+  }
+  else
+  {
+    user_str=`
+    <p class="no_result_text">No user found</p>
+    <div class="section_container_css add_user">
+        <button class="filled_btn add_pro_btn" id="Add_user_btn">Add User </button>
+        
+    </div>
+  
+    `
+    admin_project_items.innerHTML = user_str;
+  }
 
-  `
-  admin_project_items.innerHTML = user_str;
-  const user_delete = document.getElementsByClassName('user_delete');
-  for(let item of user_delete){
-  item.addEventListener("click",(e)=>{
-    userDelete(item.parentNode.parentNode.children[0].getAttribute("value"))
-  })
-  }
-  const user_update = document.getElementsByClassName('user_update');
-  for(let item of user_update){
-  item.addEventListener("click",(e)=>{
-    updateForm(item.parentNode.parentNode.children[0].getAttribute("value"))
-  })
-  }
+
 
   const Add_user_btn=document.getElementById("Add_user_btn")
   Add_user_btn.addEventListener("click",()=>{
@@ -140,75 +220,33 @@ function projectHandle(project) {
       media_str = `
       <div class="item_media">
         <video class="project_media" controls>
-            <source src="../../../public/project.mp4" type="video/mp4">
+            <source src=${project[i].file} type="video/mp4">
             </video>
         </div>
       `;
     } else {
       media_str = `
       <div class="item_media">
-         <img src="../../../public/contact.jpg" width="100">
-    </div>
+         <img src=${project[i].file} width="100">
+      </div>
       `;
     }
 
-
-    let lan_str='',tag_str=''
-
-    if(project[i].languages.length>0)
-    {
-      for (let j = 0; j < project[i].languages.length; j++) 
-      {
-
-        lan_str=lan_str+`
-        
-        <div class="lan_item">
-            <span class="lan_item_lan">${project[i].languages[j].lanName} <span  class="lan_item_per">${project[i].languages[j].lanPer}%</span></span>
-            <progress class="lan_item_pro" value='${project[i].languages[j].lanPer}' max="100"></progress>
-        </div>
-        
-        `
-      }
-    }
-    if(project[i].tags.length>0)
-    {
-      for (let k = 0; k < project[i].tags.length; k++) 
-      {
-        if(k==0)
-        {
-          tag_str=tag_str+`
-          <div class="tag_container">
-          <p class="tag_head"> Tags:</p>
-          `
-        }
-        tag_str=tag_str+`
-        
-        <span class="tag_item">${project[i].tags[k].tagName}</span>
-        
-        `
-      }
-
-      tag_str=tag_str+`
-      </div>
-      `
-    }
     pro_str =
       pro_str +
       `
       <div class="project_fetched_item">
-        <input style="display: none;" value="${project[i].projectId}">
+        <input style="display: none;" value="${project[i].project_id}">
         <div class="item_detail_section">
             ${media_str}
             <div class="item_info">
             <p class="item_heading">${project[i].title}</p>
             <h3 class="item_date">${dateSlice(
-              project[i].startDate
-            )} - ${dateSlice(project[i].endDate)}</h3>
+              project[i].start_date
+            )} - ${dateSlice(project[i].end_date)}</h3>
             </div>
         </div>
-        <p class="item_p">${project[i].desc}</p>
-        ${lan_str}
-        ${tag_str}
+        <p class="item_p">${project[i].description}</p>
 
         <button class="filled_btn project_delete_btn">Delete Project</button>
         <hr class="item_divider">
@@ -229,11 +267,9 @@ function projectHandle(project) {
 
 
 
-function userDelete(id)
+async function deleteClickedUser(id)
 {
-  let userObj=new User_registration()
-  userObj.deleteUser(id)
-  console.log("clicked delete user:"+id)
+    await userDelete(id)
 }
 
 function updateForm(id)
@@ -245,7 +281,7 @@ function updateForm(id)
 
     receivedId=parseInt(id)
     const clickedUser = activeUsersArr.filter((item) => {
-      return  item.userId === receivedId;
+      return  item.user_id === receivedId;
     });
     str=`<form id="user_form">
     <div className=''>
@@ -254,7 +290,7 @@ function updateForm(id)
         type="text"
         id="firstName"
         name="firstName"
-        value=${clickedUser[0].firstName}
+        value=${clickedUser[0].first_name}
         class='input_field'
         placeholder='Enter First Name Here'
         required
@@ -266,7 +302,7 @@ function updateForm(id)
         type="text"
         id="lastName"
         name="lastName"
-        value=${clickedUser[0].lastName}
+        value=${clickedUser[0].last_name}
         class='input_field'
         placeholder='Enter Last Name Here'
         required
@@ -283,7 +319,7 @@ function updateForm(id)
           placeholder='Enter Email Here'
           required
         />
-      </div>
+    </div>
         <div className=''>
         <label for="userRole" class="label_input">Select User Role:</label>
         <select name="userRole" id="userRole" class="input_field">
@@ -331,7 +367,18 @@ function updateForm(id)
           placeholder='Enter Email Here'
           required
         />
-      </div>
+    </div>
+    <div className=''>
+    <label for="password" class="label_input">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class='input_field'
+          placeholder='Enter password Here'
+          required
+        />
+    </div>
         <div className=''>
         <label for="userRole" class="label_input">Select User Role:</label>
         <select name="userRole" id="userRole" class="input_field">
@@ -352,28 +399,42 @@ function updateForm(id)
 
   let user_form=document.getElementById("user_form")
 
-  user_form.addEventListener("submit",(e)=>{
+  user_form.addEventListener("submit",async(e)=>{
     e.preventDefault();
     const data = new FormData(e.target);
     const obj = Object.fromEntries(data);
-    const updatedVersion={
-      firstName: obj.firstName,
-      lastName: obj.lastName,
-      email: obj.email,
-      password: obj.password,
-      userRole: obj.userRole,
+    let updatedVersion;
+
+    if(receivedId)
+    {
+      updatedVersion={
+        first_name: obj.firstName,
+        last_name: obj.lastName,
+        email: obj.email,
+        user_role: obj.userRole,
+      }
+
+    }
+    else
+    {
+      updatedVersion={
+        first_name: obj.firstName,
+        last_name: obj.lastName,
+        email: obj.email,
+        password: obj.password,
+        user_role: obj.userRole,
+      }
     }
 
 
-    let pObj=new User_registration();
     if(receivedId)
     {
-      pObj.updateUser(receivedId,updatedVersion);
+      await userUpdate(updatedVersion,receivedId)
       
     }
     else
     {
-      pObj.addUser(updatedVersion);
+      await userAdd(updatedVersion)
     }
     
     myModal.style.display = "none";
@@ -381,33 +442,19 @@ function updateForm(id)
   })
 }
 
-function projectDelete(id)
+async function projectDelete(id)
 {
-  const pObj=new Project();
-
-  pObj.deleteProject(id);
-
+  await deleteProject(id)
 }
 
 let logout_btn = document.getElementById("logout_btn");
 
 logout_btn.addEventListener("click", () => {
-  localStorage.removeItem("userId");
+  localStorage.removeItem("auth_token");
   localStorage.removeItem("userRole");
 
   location.href = "http://127.0.0.1:5501/src/pages/Login/login.html";
 });
-
-function userDeleteHandle(id) {
-  console.log("Active id:" + id);
-}
-function projectDeleteHandle(id) {
-  console.log("Active project:" + id);
-}
-function userupdateHandle(id) {
-  console.log("Active id:" + id);
-}
-
 
 
 // Project search handling-----------
@@ -433,16 +480,8 @@ project_search_form.addEventListener("submit",(e)=>{
   }else if(select_val==="all")
   {
     searchedProjectArr = projectsArr.filter((item) => {
-      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 
     });
-    console.log(searchedProjectArr)
-  }else if(select_val==="lanName")
-  {
-    searchedProjectArr =checkInLan(projectsArr,input_val)
-  }
-  else if(select_val==="tagName")
-  {
-    searchedProjectArr = checkInTag(projectsArr,input_val)
   }
   projectHandle(searchedProjectArr)
 
@@ -463,16 +502,8 @@ search_project_keyword_input.onchange=function(){
   }else if(select_val==="all")
   {
     searchedProjectArr = projectsArr.filter((item) => {
-      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 
     });
-    console.log(searchedProjectArr)
-  }else if(select_val==="lanName")
-  {
-    searchedProjectArr =checkInLan(projectsArr,input_val)
-  }
-  else if(select_val==="tagName")
-  {
-    searchedProjectArr = checkInTag(projectsArr,input_val)
   }
   projectHandle(searchedProjectArr)
  
@@ -491,16 +522,8 @@ projectKeyword.onchange=function(){
   }else if(select_val==="all")
   {
     searchedProjectArr = projectsArr.filter((item) => {
-      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 || checkInLan(Array(item),input_val).length>0  || checkInTag(Array(item),input_val).length>0 
+      return checkInTitle(Array(item),input_val).length>0 || checkInDesc(Array(item),input_val).length>0 
     });
-    console.log(searchedProjectArr)
-  }else if(select_val==="lanName")
-  {
-    searchedProjectArr =checkInLan(projectsArr,input_val)
-  }
-  else if(select_val==="tagName")
-  {
-    searchedProjectArr = checkInTag(projectsArr,input_val)
   }
   projectHandle(searchedProjectArr)
 }
@@ -509,20 +532,7 @@ projectKeyword.onchange=function(){
 
 function checkInDesc(projectsArr,input_val){
   return   projectsArr.filter((item) => {
-    return item.desc.toLowerCase().includes(input_val.toLowerCase());
-  });
-}
-function checkInTag(projectsArr,input_val){
-  return projectsArr.filter((item) => {
-    for (let i = 0; i < item.tags.length; i++) {
-      if(item.tags[i].tagName.toLowerCase().includes(input_val.toLowerCase()))
-        {
-          console.log(item)
-          return item;
-        }
-      
-    }
-    
+    return item.description.toLowerCase().includes(input_val.toLowerCase());
   });
 }
 function checkInTitle(projectsArr,input_val){
@@ -531,19 +541,7 @@ function checkInTitle(projectsArr,input_val){
   });
   return searchedProjectArr;
 }
-function checkInLan(projectsArr,input_val){
-  return projectsArr.filter((item) => {
-    for (let i = 0; i < item.languages.length; i++) {
-      if(item.languages[i].lanName.toLowerCase().includes(input_val.toLowerCase()))
-        {
-          console.log(item)
-          return item;
-        }
-      
-    }
-    
-  });
-}
+
 
 
 
@@ -561,26 +559,24 @@ user_search_form.addEventListener("submit",(e)=>{
   let select_val=userKeyword.value;
   if(select_val==="firstName")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.firstName.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedUserArr = searchInfirstName(activeUsersArr,input_val);
   }
   else if(select_val==="lastName")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.lastName.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedUserArr = searchInlastName(activeUsersArr,input_val)
   }
   else if(select_val==="email")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.email.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedUserArr = searchInEmail(activeUsersArr,input_val)
   }
   else if(select_val==="userRole")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.userRole.toLowerCase().includes(input_val.toLowerCase());
+    searchedUserArr = searchInuserRole(activeUsersArr,input_val)
+  }else if(select_val==="all")
+  {
+    searchedUserArr= activeUsersArr.filter((item) => {
+      return searchInEmail(Array(item),input_val).length>0 || searchInfirstName(Array(item),input_val).length>0 
+      || searchInlastName(Array(item),input_val).length>0 || searchInuserRole(Array(item),input_val).length>0
     });
   }
   userHandle(searchedUserArr)
@@ -594,26 +590,24 @@ search_user_keyword_input.onchange=function(){
   let select_val=userKeyword.value;
   if(select_val==="firstName")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.firstName.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedUserArr = searchInfirstName(activeUsersArr,input_val);
   }
   else if(select_val==="lastName")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.lastName.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedUserArr = searchInlastName(activeUsersArr,input_val)
   }
   else if(select_val==="email")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.email.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedUserArr = searchInEmail(activeUsersArr,input_val)
   }
   else if(select_val==="userRole")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.userRole.toLowerCase().includes(input_val.toLowerCase());
+    searchedUserArr = searchInuserRole(activeUsersArr,input_val)
+  }else if(select_val==="all")
+  {
+    searchedUserArr= activeUsersArr.filter((item) => {
+      return searchInEmail(Array(item),input_val).length>0 || searchInfirstName(Array(item),input_val).length>0 
+      || searchInlastName(Array(item),input_val).length>0 || searchInuserRole(Array(item),input_val).length>0
     });
   }
   userHandle(searchedUserArr)
@@ -624,30 +618,52 @@ userKeyword.onchange=function(){
   let select_val=userKeyword.value;
   if(select_val==="firstName")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.firstName.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedUserArr = searchInfirstName(activeUsersArr,input_val);
   }
   else if(select_val==="lastName")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.lastName.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedUserArr = searchInlastName(activeUsersArr,input_val)
   }
   else if(select_val==="email")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.email.toLowerCase().includes(input_val.toLowerCase());
-    });
+    searchedUserArr = searchInEmail(activeUsersArr,input_val)
   }
   else if(select_val==="userRole")
   {
-    searchedUserArr = activeUsersArr.filter((item) => {
-      return item.userRole.toLowerCase().includes(input_val.toLowerCase());
+    searchedUserArr = searchInuserRole(activeUsersArr,input_val)
+  }else if(select_val==="all")
+  {
+    searchedUserArr= activeUsersArr.filter((item) => {
+      return searchInEmail(Array(item),input_val).length>0 || searchInfirstName(Array(item),input_val).length>0 
+      || searchInlastName(Array(item),input_val).length>0 || searchInuserRole(Array(item),input_val).length>0
     });
   }
   userHandle(searchedUserArr)
 }
+
+
+function searchInEmail(activeArr,input_val){
+  return activeArr.filter((item) => {
+    return item.email.toLowerCase().includes(input_val.toLowerCase());
+  });
+}
+function searchInfirstName(activeArr,input_val){
+  return activeArr.filter((item) => {
+    return item.first_name.toLowerCase().includes(input_val.toLowerCase());
+  });
+}
+function searchInlastName(activeArr,input_val){
+  return activeArr.filter((item) => {
+    return item.last_name.toLowerCase().includes(input_val.toLowerCase());
+  });
+}
+function searchInuserRole(activeArr,input_val){
+  return activeArr.filter((item) => {
+    return item.user_role.toLowerCase().includes(input_val.toLowerCase());
+  });
+}
+
+
 
 window.onclick = function(event) {
   if (event.target == myModal) {

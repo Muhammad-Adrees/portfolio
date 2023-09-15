@@ -7,8 +7,8 @@ const addUser=async(res,obj,DBcon)=>{
     // adding record on db
     const addQuery=`
     INSERT INTO user
-    (first_name,last_name,email,password,user_role) 
-    VALUES('${obj.first_name}','${obj.last_name}','${obj.email}','${hash}','${obj.user_role}')
+    (first_name,last_name,email,password,user_role,auth_token) 
+    VALUES('${obj.first_name}','${obj.last_name}','${obj.email}','${hash}','${obj.user_role}','')
     `
     DBcon.query(addQuery,(err,result)=>{
         if(err)
@@ -60,11 +60,11 @@ const getSingleUser=(res,id,DBcon)=>{
 }
 
 const updateUser=async(res,id,upObj,DBcon)=>{
-    const hash=await hashPassword(upObj.password)
+    // const hash=await hashPassword(upObj.password)
     
     const updateQuery=`
     UPDATE user SET first_name='${upObj.first_name}',last_name='${upObj.last_name}',
-    email='${upObj.email}',password='${hash}',user_role='${upObj.user_role}' WHERE user_id=${parseInt(id)}
+    email='${upObj.email}',user_role='${upObj.user_role}' WHERE user_id=${parseInt(id)}
     `
     DBcon.query(updateQuery,(err,result)=>{
         if(err)
